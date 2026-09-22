@@ -1,0 +1,3239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Blog Kit — 수강생 실습용</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Courier+Prime:wght@400;700&display=swap');
+
+  /* ─── RESET ─── */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --bg: #f8f7f4;
+    --border: #0a0a0a;
+    --border-light: #e0ddd8;
+    --sub: #6b6b6b;
+    --accent: #1a1a1a;
+
+    /* category colors — 수강생이 원하는 색으로 교체 */
+    --cat-1: #ffd166;
+    --cat-2: #06d6a0;
+    --cat-3: #118ab2;
+    --cat-4: #ef476f;
+    --cat-5: #8338ec;
+    --cat-6: #fb8500;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    border-right: 2px solid var(--border);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+  }
+
+  .profile-section {
+    padding: 36px 28px 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .avatar-wrap {
+    width: 72px; height: 72px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: #e8e4df;
+    margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--sub);
+    letter-spacing: 0.06em;
+    overflow: hidden;
+  }
+  .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+  .profile-name {
+    font-size: 18px; font-weight: 800;
+    line-height: 1.2; margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .profile-location {
+    font-size: 12px; color: var(--sub);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .profile-tags {
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .profile-tag {
+    font-size: 12px; color: var(--sub);
+    display: flex; align-items: flex-start; gap: 6px;
+    line-height: 1.4;
+  }
+  .profile-tag::before { content: '—'; color: #ccc; flex-shrink: 0; margin-top: 1px; }
+
+  .profile-role {
+    font-size: 13px; font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+
+  .profile-identity {
+    font-size: 12px; font-weight: 500; color: var(--sub);
+    line-height: 1.6;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .nav-section {
+    padding: 24px 28px;
+    flex: 1;
+  }
+
+  .nav-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--sub); margin-bottom: 12px;
+  }
+
+  .nav-menu { list-style: none; }
+  .nav-menu li {
+    border-top: 1px solid var(--border-light);
+  }
+  .nav-menu li:last-child { border-bottom: 1px solid var(--border-light); }
+  .nav-menu a, .nav-menu button {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    padding: 13px 0;
+    font-size: 14px; font-weight: 600;
+    color: var(--black);
+    text-decoration: none;
+    background: none; border: none; cursor: pointer;
+    transition: color 0.15s;
+    font-family: inherit;
+  }
+  .nav-menu a:hover, .nav-menu button:hover { color: #666; }
+  .nav-menu a.active, .nav-menu button.active {
+    color: var(--black);
+  }
+  .nav-arrow { font-size: 12px; color: #bbb; }
+
+  .sidebar-footer {
+    padding: 20px 28px;
+    border-top: 1px solid var(--border-light);
+    font-size: 11px; color: #aaa;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  /* ─── MAIN ─── */
+  .main {
+    margin-left: 280px;
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  /* ─── VIEW TOGGLE ─── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ════════════════════════
+     HOME VIEW
+  ════════════════════════ */
+  .home-hero {
+    padding: 64px 64px 48px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--sub); margin-bottom: 24px;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .hero-title {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    max-width: 640px;
+  }
+
+  .hero-desc {
+    font-size: 16px; color: var(--sub);
+    line-height: 1.8; max-width: 520px;
+    margin-bottom: 32px;
+    word-break: keep-all; overflow-wrap: break-word;
+  }
+
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    background: var(--black); color: var(--white);
+    font-size: 13px; font-weight: 700;
+    border: 2px solid var(--border);
+    cursor: pointer; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .hero-cta:hover { background: #333; }
+
+  /* ─── PAGE HEADER (WORKS 등 서브 페이지용, Hero보다 작은 헤더) ─── */
+  .page-header {
+    padding: 40px 64px 32px;
+    border-bottom: 2px solid var(--border);
+  }
+  .page-title {
+    font-size: clamp(28px, 3.2vw, 36px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .page-desc {
+    font-size: 14px; color: var(--sub);
+    line-height: 1.6;
+  }
+
+  /* Works preview */
+  .section-block {
+    padding: 48px 64px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-size: 11px; font-weight: 700;
+    font-family: 'Courier Prime', monospace;
+    color: var(--sub); margin-right: 12px;
+  }
+  .section-title {
+    font-size: 22px; font-weight: 800;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-sub {
+    font-size: 12px; font-weight: 500; color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+  }
+  .section-link {
+    font-size: 13px; font-weight: 600;
+    color: var(--sub); text-decoration: none;
+    display: flex; align-items: center; gap: 4px;
+    cursor: pointer; background: none; border: none; font-family: inherit;
+  }
+  .section-link:hover { color: var(--black); }
+
+  /* Works grid */
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 2px solid var(--border);
+  }
+  .works-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .works-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+  /* Career list */
+  .career-list {
+    display: flex; flex-direction: column;
+    border: 2px solid var(--border);
+  }
+  .career-item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 24px;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .career-item:last-child { border-bottom: none; }
+  .career-period {
+    font-size: 12px;
+    font-family: 'Courier Prime', monospace;
+    color: var(--sub);
+  }
+  .career-company {
+    font-size: 16px; font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .career-role {
+    font-size: 13px; font-weight: 600; color: var(--sub);
+    margin-bottom: 10px;
+  }
+  .career-summary {
+    font-size: 13px; color: var(--sub);
+    line-height: 1.7;
+  }
+  .career-summary-list {
+    list-style: none;
+    display: flex; flex-direction: column;
+    gap: 6px;
+  }
+  .career-summary-list li {
+    font-size: 13px; color: var(--sub);
+    line-height: 1.6;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .career-summary-list li::before { content: '—'; color: #ccc; flex-shrink: 0; margin-top: 1px; }
+
+  /* Capability grid */
+  .capability-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border: 2px solid var(--border);
+  }
+  .capability-item {
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .capability-item:last-child { border-right: none; }
+  .capability-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .capability-num {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Courier Prime', monospace;
+    color: var(--sub);
+    margin-bottom: 14px;
+  }
+  .capability-label {
+    font-size: 13px; font-weight: 700;
+    line-height: 1.4;
+  }
+  .capability-desc {
+    font-size: 12px; font-weight: 400; color: var(--sub);
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  /* ─── WORK SECTION (RAINS/LMOOD/Bootcamp 등 아티클형 Work Detail 반복 블록) ─── */
+  .work-section {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .work-section:last-child { border-bottom: none; }
+  .work-section-num {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Courier Prime', monospace;
+    color: var(--sub);
+    margin-bottom: 10px;
+  }
+  .work-section-title {
+    font-size: 20px; font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .work-section-desc {
+    font-size: 14px; color: var(--sub);
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 20px;
+    word-break: keep-all; overflow-wrap: break-word;
+  }
+  .work-section-visual {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 2px solid var(--border);
+    margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #bbb;
+    font-family: 'Courier Prime', monospace;
+  }
+  .work-section-role {
+    font-size: 13px; color: var(--sub);
+    line-height: 1.7;
+    max-width: 640px;
+    word-break: keep-all; overflow-wrap: break-word;
+  }
+
+  /* Work Section 내 다중 이미지 갤러리 (Notion 이미지 순서 유지, 원본 비율 존중) */
+  .work-section-images {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .work-section-images.cols-1 { grid-template-columns: 1fr; }
+  .work-section-images.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .work-section-images.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .work-section-images.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .work-section-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid var(--border);
+  }
+  /* GWP처럼 비율이 서로 다른 이미지 묶음: 잘림 없이(object-fit: contain) 갤러리로 배치 */
+  .gwp-gallery .work-section-img {
+    height: 320px;
+    object-fit: contain;
+    object-position: center;
+    background: var(--white);
+  }
+  @media (max-width: 900px) {
+    .work-section-images.cols-2,
+    .work-section-images.cols-3,
+    .work-section-images.cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ════════════════════════
+     RAINS / LMOOD / BOOTCAMP DETAIL — compact editorial overrides
+     scoped by view id only, base classes above stay untouched
+     (HOME / WORKS / Brand A / Case Detail keep original spacing)
+  ════════════════════════ */
+  #view-rains .page-header,
+  #view-lmood .page-header {
+    padding: 24px 64px 16px;
+  }
+  #view-bootcamp .page-header {
+    padding: 18px 64px 12px;
+  }
+  /* RAINS/LMOOD: Header 바로 아래 divider — 본문에서 쓰는 얇은 solid 라인 언어로 통일 (Overview/Role·Period와 한 영역처럼 연결) */
+  #view-rains .page-header {
+    border-bottom: 1px solid var(--border-light);
+  }
+  #view-lmood .page-header {
+    border-bottom: 1px solid var(--border-light);
+  }
+  /* BOOTCAMP: RAINS와 동일하게 Header 바로 아래 가로 실선을 옅은 회색 점선으로 완화 */
+  #view-bootcamp .page-header {
+    border-bottom: 1px solid var(--border-light);
+  }
+  #view-rains .section-block,
+  #view-lmood .section-block,
+  #view-bootcamp .section-block {
+    padding: 28px 64px;
+  }
+
+  /* Project Info — Overview + Role/Period(Period/Program)를 하나의 compact 영역으로 통합 */
+  #view-rains .project-info,
+  #view-lmood .project-info {
+    padding: 18px 64px 16px;
+  }
+  #view-bootcamp .project-info {
+    padding: 12px 64px 10px;
+  }
+  #view-rains .project-info-grid,
+  #view-lmood .project-info-grid,
+  #view-bootcamp .project-info-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  #view-rains .project-info-label,
+  #view-lmood .project-info-label,
+  #view-bootcamp .project-info-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin-bottom: 8px;
+  }
+  #view-rains .project-info .hero-desc,
+  #view-lmood .project-info .hero-desc,
+  #view-bootcamp .project-info .hero-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 0;
+    max-width: none;
+  }
+
+  /* 공통: 상세 페이지 본문 설명(.hero-desc)이 넓은 editorial 폭에 비해 좁게 잘리지 않도록,
+     section-block 내부에서는 hero-desc의 max-width 제한을 해제 (Home hero 등 기본값은 유지) */
+  #view-rains .section-block .hero-desc,
+  #view-lmood .section-block .hero-desc,
+  #view-bootcamp .section-block .hero-desc,
+  #view-brand-a .section-block .hero-desc,
+  .case-detail-view .section-block .hero-desc {
+    max-width: none;
+  }
+  #view-rains .project-info .career-list,
+  #view-lmood .project-info .career-list,
+  #view-bootcamp .project-info .career-list {
+    border: none;
+  }
+  #view-rains .project-info .career-item,
+  #view-lmood .project-info .career-item,
+  #view-bootcamp .project-info .career-item {
+    padding: 0;
+    border-bottom: none;
+  }
+  /* Overview / Role·Period 사이 구분선 — 공통 padding은 공유, 선 스타일은 RAINS/LMOOD(solid)와 Bootcamp(dotted, 기존 유지)로 분리 */
+  #view-rains .project-info-role,
+  #view-lmood .project-info-role,
+  #view-bootcamp .project-info-role {
+    padding-left: 28px;
+  }
+  #view-rains .project-info-role,
+  #view-lmood .project-info-role {
+    border-left: 1px solid var(--border-light);
+  }
+  #view-bootcamp .project-info-role {
+    border-left: 1px solid var(--border-light);
+  }
+  @media (max-width: 900px) {
+    #view-rains .project-info-grid,
+    #view-lmood .project-info-grid,
+    #view-bootcamp .project-info-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    #view-rains .project-info-role,
+    #view-lmood .project-info-role,
+    #view-bootcamp .project-info-role {
+      padding-left: 0;
+      padding-top: 16px;
+      border-left: none;
+    }
+    #view-rains .project-info-role,
+    #view-lmood .project-info-role {
+      border-top: 1px solid var(--border-light);
+    }
+    #view-bootcamp .project-info-role {
+      border-top: 1px solid var(--border-light);
+    }
+  }
+
+  /* RAINS/LMOOD: 마스킹 안내 — 이미지가 있는 Work 영역에 낮은 위계로 배치 */
+  #view-rains .masking-note,
+  #view-lmood .masking-note {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--sub);
+    line-height: 1.6;
+  }
+
+  /* RAINS/LMOOD: 각 업무 영역의 마지막 정보로 배치 — 본문 바로 아래, divider 직전 (두 상세 페이지 동일 규칙 재사용) */
+  #view-rains .masking-note,
+  #view-lmood .masking-note {
+    margin: 8px 0 0;
+    text-align: right;
+  }
+
+  #view-rains .section-header,
+  #view-lmood .section-header,
+  #view-bootcamp .section-header {
+    margin-bottom: 20px;
+  }
+  #view-rains .work-section,
+  #view-lmood .work-section {
+    padding: 22px 0;
+  }
+  #view-bootcamp .work-section {
+    padding: 18px 0;
+  }
+  #view-rains .work-section-title,
+  #view-lmood .work-section-title,
+  #view-bootcamp .work-section-title {
+    margin-bottom: 8px;
+  }
+  #view-rains .work-section-images,
+  #view-lmood .work-section-images,
+  #view-bootcamp .work-section-images {
+    margin-bottom: 20px;
+  }
+  #view-rains .work-section-desc,
+  #view-lmood .work-section-desc,
+  #view-bootcamp .work-section-desc {
+    max-width: none;
+    line-height: 1.8;
+  }
+
+  /* 공통: Work 번호(섹션 번호) 위계 강화 + 2줄 타이틀(영문/국문) 구조 */
+  #view-rains .section-header .section-title,
+  #view-lmood .section-header .section-title,
+  #view-bootcamp .section-header .section-title,
+  #view-brand-a .section-header .section-title,
+  .case-detail-view .section-header .section-title {
+    align-items: flex-start;
+    gap: 18px;
+  }
+  #view-rains .section-num,
+  #view-lmood .section-num,
+  #view-bootcamp .section-num,
+  #view-brand-a .section-num,
+  .case-detail-view .section-num {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--black);
+  }
+  #view-rains .section-title-text,
+  #view-lmood .section-title-text,
+  #view-bootcamp .section-title-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  #view-rains .section-title-en,
+  #view-lmood .section-title-en,
+  #view-bootcamp .section-title-en {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  #view-rains .section-title-text .section-sub,
+  #view-lmood .section-title-text .section-sub,
+  #view-bootcamp .section-title-text .section-sub {
+    font-size: 12px;
+  }
+
+  /* RAINS: 내부 sub-work 번호 — Main Work 번호(32px)보다는 작지만, 소제목 번호로 명확히 인식되도록 크기/명도 강화 */
+  #view-rains .work-section-num {
+    font-size: 15px;
+    font-weight: 800;
+    opacity: 1;
+    color: var(--black);
+  }
+
+  /* RAINS: Main Work 한글 부제 — 영문 타이틀과 같은 sans-serif 계열로, 크기/굵기를 높여 하나의 title group으로 보이게 */
+  #view-rains .section-title-text .section-sub {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  /* LMOOD: RAINS와 동일하게 Main Work 한글 부제를 sans-serif + 큰 크기/굵기로 적용해 하나의 title group으로 보이게 */
+  #view-lmood .section-title-text .section-sub {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  /* BOOTCAMP: RAINS와 동일하게 Main Work 한글 부제를 sans-serif + 큰 크기/굵기로 적용해 하나의 title group으로 보이게 */
+  #view-bootcamp .section-title-text .section-sub {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  /* RAINS: Market Trend & Competitor Research 섹션 전체 vertical spacing 축소 */
+  #view-rains .rains-market-section .work-section {
+    padding: 12px 0;
+  }
+  #view-rains .rains-market-section .work-section-images {
+    margin-bottom: 10px;
+  }
+
+  /* RAINS: 반복되는 4/3장 연구 이미지에 main/sub 위계 부여 (main 상단 전체폭, sub는 하단 균등폭) */
+  #view-rains .work-gallery-4 { grid-template-columns: repeat(3, 1fr); }
+  #view-rains .work-gallery-3 { grid-template-columns: repeat(2, 1fr); }
+  #view-rains .work-gallery-4 .img-main,
+  #view-rains .work-gallery-3 .img-main {
+    grid-column: 1 / -1;
+    max-width: 60%;
+    margin: 0 auto;
+    display: block;
+  }
+  /* RAINS: 단일 evidence 이미지(오더리스트/ERP/인보이스)는 compact하게 중앙 축소 */
+  #view-rains .op-evidence-img {
+    max-width: 760px;
+    margin: 0 auto;
+    display: block;
+  }
+  /* RAINS: AW 경쟁사 비교자료 — 원본/크롭 변경 없이 콘텐츠 폭의 약 70~75%로 표시, 중앙 정렬 (화면 폭에 비례해 스케일) */
+  #view-rains .aw-evidence-img {
+    max-width: 73%;
+    margin: 0 auto;
+    display: block;
+  }
+  /* RAINS: Pop-up 2장이 서로 다른 높이로 보이지 않도록 동일 컨테이너 + object-fit:contain (crop 없음) */
+  #view-rains .popup-evidence-img {
+    height: 360px;
+    object-fit: contain;
+    object-position: center;
+    background: var(--white);
+  }
+  /* RAINS: GWP 갤러리 box 높이만 축소 (object-fit: contain 유지, 잘림 없음) */
+  #view-rains .gwp-gallery .work-section-img {
+    height: 260px;
+  }
+  @media (max-width: 900px) {
+    #view-rains .work-gallery-4,
+    #view-rains .work-gallery-3 {
+      grid-template-columns: 1fr;
+    }
+    #view-rains .work-gallery-4 .img-main,
+    #view-rains .work-gallery-3 .img-main {
+      grid-column: 1;
+    }
+  }
+
+  /* LMOOD: Sales Monitoring 2열 — 마스킹된 자료 가독성을 위해 확대(3차) */
+  #view-lmood .lmood-sales-img {
+    height: 300px;
+    object-fit: contain;
+    background: var(--white);
+  }
+  /* LMOOD: Reorder Management — 중앙 정렬된 evidence visual, 가독성 위해 확대(3차) */
+  #view-lmood .reorder-evidence-img {
+    max-width: 640px;
+    margin: 0 auto;
+    display: block;
+  }
+  /* LMOOD: Promotion & Discount 3열 — 가독성 위해 확대(3차) */
+  #view-lmood .lmood-promo-img {
+    height: 260px;
+    object-fit: contain;
+    background: var(--white);
+  }
+  /* LMOOD: Additional Operations 세로 4행 → 2×2 compact grid */
+  #view-lmood .additional-ops-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px 28px;
+  }
+  #view-lmood .additional-op-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  @media (max-width: 900px) {
+    #view-lmood .additional-ops-grid { grid-template-columns: 1fr; }
+  }
+
+  /* BOOTCAMP: Supporting work — RAINS/LMOOD보다 전체적으로 compact */
+  #view-bootcamp .bootcamp-market-img {
+    max-width: 640px;
+    margin: 0 auto;
+    display: block;
+  }
+  /* BOOTCAMP: SS Season Strategy — 2열 대신 세로 1열로 중앙 정렬, 내용이 잘 보이도록 max-width로만 제한 */
+  #view-bootcamp .bootcamp-strategy-img {
+    max-width: 720px;
+    margin: 0 auto;
+    display: block;
+  }
+  #view-bootcamp .bootcamp-strategy-img:first-child {
+    margin-bottom: 36px;
+  }
+  #view-bootcamp .bootcamp-sales-img {
+    max-width: 820px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .work-card {
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    text-decoration: none; color: inherit;
+  }
+  .work-card:last-child { border-right: none; }
+  .work-card:hover { background: #f0ede8; }
+
+  .work-thumb {
+    width: 100%; aspect-ratio: 4/3;
+    background: #e8e4df;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #bbb; font-family: 'Courier Prime', monospace;
+    overflow: hidden;
+  }
+  .work-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* HOME Selected Works / WORKS의 RAINS·LMOOD·Brand A 썸네일 전용 —
+     원본 이미지가 실제로 1536×1024(3:2)이므로 컨테이너 비율을 원본과 동일하게 맞춰
+     크롭도, 여백도 없이 이미지 바깥선과 썸네일 테두리가 정확히 일치하도록 함 */
+  .work-thumb.proj-thumb,
+  .card-thumb.proj-thumb {
+    aspect-ratio: 3 / 2;
+    background: var(--bg);
+  }
+  .work-thumb.proj-thumb img,
+  .card-thumb.proj-thumb img {
+    object-fit: contain;
+    background: var(--bg);
+  }
+
+  .work-info { padding: 16px; }
+  .work-category {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--sub); margin-bottom: 6px;
+  }
+  .work-title {
+    font-size: 13px; font-weight: 700;
+    line-height: 1.4;
+  }
+
+  /* hover — 기존 neo-brutalist 톤: 살짝 위로 이동 + hard shadow 강조 */
+  .selected-works-grid .work-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 var(--border);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Blog preview */
+  .blog-preview-list {
+    display: flex; flex-direction: column; gap: 0;
+    border: 2px solid var(--border);
+  }
+
+  .post-preview-row {
+    display: grid; grid-template-columns: 200px 1fr auto;
+    align-items: center; gap: 0;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer; text-decoration: none; color: inherit;
+    transition: background 0.1s;
+  }
+  .post-preview-row:last-child { border-bottom: none; }
+  .post-preview-row:hover { background: #f4f1ec; }
+
+  .post-row-tag {
+    padding: 20px 24px;
+    border-right: 1px solid var(--border-light);
+  }
+  .post-row-info { padding: 20px 28px; }
+  .post-row-meta {
+    padding: 20px 24px;
+    font-size: 11px; color: var(--sub); white-space: nowrap;
+    text-align: right;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .post-row-title {
+    font-size: 15px; font-weight: 700;
+    line-height: 1.4; margin-bottom: 6px;
+  }
+  .post-row-desc {
+    font-size: 13px; color: var(--sub);
+    line-height: 1.6; display: -webkit-box;
+    -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  /* ════════════════════════
+     BLOG VIEW
+  ════════════════════════ */
+  .blog-header {
+    padding: 48px 64px 36px;
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+
+  .blog-title {
+    font-size: 36px; font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+  .blog-count {
+    font-size: 13px; color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+  }
+
+  /* Category filter */
+  .cat-filter {
+    padding: 0 64px;
+    border-bottom: 2px solid var(--border);
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .cat-btn {
+    padding: 16px 20px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: none; border: none; border-right: 1px solid var(--border-light);
+    cursor: pointer; color: var(--sub); white-space: nowrap;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .cat-btn:first-child { padding-left: 0; }
+  .cat-btn:hover { color: var(--black); }
+  .cat-btn.active { color: var(--black); border-bottom: 3px solid var(--black); }
+
+  /* Blog grid */
+  .blog-grid {
+    padding: 48px 64px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .blog-card {
+    border: 2px solid var(--border);
+    background: var(--white);
+    cursor: pointer; text-decoration: none; color: inherit;
+    display: flex; flex-direction: column;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .blog-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--border);
+  }
+
+  .card-thumb {
+    width: 100%; aspect-ratio: 16/9;
+    background: #e8e4df;
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #bbb; font-family: 'Courier Prime', monospace;
+    overflow: hidden;
+  }
+  .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+  .cat-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1.5px solid currentColor;
+    align-self: flex-start;
+  }
+
+  .card-title {
+    font-size: 15px; font-weight: 800;
+    line-height: 1.4; letter-spacing: -0.01em;
+  }
+
+  .card-desc {
+    font-size: 13px; color: var(--sub);
+    line-height: 1.6; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-light);
+    font-size: 11px; color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+  }
+
+  /* ─── CATEGORY COLORS ─── */
+  .cat-c1 { color: #b38600; border-color: #b38600; }
+  .cat-c2 { color: #047857; border-color: #047857; }
+  .cat-c3 { color: #0369a1; border-color: #0369a1; }
+  .cat-c4 { color: #b91c1c; border-color: #b91c1c; }
+  .cat-c5 { color: #6d28d9; border-color: #6d28d9; }
+  .cat-c6 { color: #c2410c; border-color: #c2410c; }
+
+  /* ════════════════════════
+     BRAND A DETAIL — Workflow / Dashboard
+     (기존 토큰만 사용, 새 색상·폰트 추가 없음)
+  ════════════════════════ */
+  .workflow-flow {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .workflow-step {
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    background: var(--white);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .workflow-arrow {
+    font-size: 14px; color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .dashboard-visual {
+    width: 100%;
+    border: 2px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .dashboard-visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ─── BRAND A — spacing pass (scoped to #view-brand-a only, no effect on Case Detail views) ─── */
+  #view-brand-a .section-block {
+    padding: 40px 64px;
+  }
+  #view-brand-a .section-header {
+    margin-bottom: 26px;
+  }
+
+  /* 01 Brand Introduction — compact rhythm via margin only (line-height untouched), Case Detail 일반 본문과 동일한 8px로 통일 */
+  #view-brand-a .brand-intro-section .hero-desc {
+    margin-bottom: 8px;
+  }
+  #view-brand-a .brand-intro-section .hero-desc:last-of-type {
+    margin-bottom: 18px;
+  }
+
+  /* 02 Data & Analysis Pipeline — flow enlarged ~15-20%, proportions kept */
+  #view-brand-a .pipeline-section .workflow-flow {
+    gap: 12px;
+    margin-bottom: 24px;
+    justify-content: center;
+  }
+  #view-brand-a .pipeline-section .workflow-step {
+    padding: 16px 21px;
+    font-size: 14px;
+  }
+  #view-brand-a .pipeline-section .workflow-arrow {
+    font-size: 17px;
+  }
+  /* 일반 설명문 — Case Detail 일반 본문과 동일한 8px로 통일 (workflow-flow 자체 margin-bottom 24px는 유지) */
+  #view-brand-a .pipeline-section .hero-desc {
+    margin-bottom: 8px;
+  }
+  /* Project Structure / Data Structure prioritized, Raw Data secondary — no crop, original ratio kept */
+  #view-brand-a .pipeline-grid {
+    grid-template-columns: 1.3fr 0.9fr 1.3fr;
+    align-items: center;
+  }
+  #view-brand-a .pipeline-grid .work-thumb {
+    aspect-ratio: auto;
+    height: 230px;
+    background: var(--white);
+  }
+  #view-brand-a .pipeline-grid .work-thumb img {
+    object-fit: contain;
+  }
+  #view-brand-a .pipeline-grid .work-card:nth-child(2) .work-thumb {
+    background: #f0ede8;
+    position: relative;
+  }
+  #view-brand-a .pipeline-grid .work-card:nth-child(2) .work-category,
+  #view-brand-a .pipeline-grid .work-card:nth-child(2) .work-title {
+    color: var(--sub);
+  }
+  /* Raw Data reference only: zoom into the header row + first data rows instead of
+     shrinking the whole file to fit (columns/rows were unreadable at full-file scale) */
+  #view-brand-a .pipeline-grid .work-card:nth-child(2) .work-thumb img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300%;
+    max-width: none;
+    height: auto;
+  }
+  @media (max-width: 900px) {
+    #view-brand-a .pipeline-grid {
+      grid-template-columns: 1fr;
+    }
+    #view-brand-a .pipeline-grid .work-card:nth-child(2) .work-thumb img {
+      width: 130%;
+    }
+  }
+
+  /* 03 Dashboard — unify size, compact, no crop (object-fit: contain) */
+  #view-brand-a .dashboard-section .work-section {
+    padding: 24px 0;
+  }
+  #view-brand-a .dashboard-section .work-section-title {
+    margin-bottom: 10px;
+  }
+  #view-brand-a .dashboard-visual {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #view-brand-a .dashboard-visual img {
+    aspect-ratio: 2 / 1;
+    object-fit: contain;
+    background: var(--white);
+  }
+  #view-brand-a .dashboard-section .hero-desc {
+    margin-top: 14px;
+    margin-bottom: 0;
+  }
+
+  /* 04 Main Cases — 2x2 grid desktop / 1-col mobile; remove redundant nested padding */
+  #view-brand-a .main-cases-grid {
+    padding: 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 900px) {
+    #view-brand-a .main-cases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* thumbnail area ~23% shorter than the original 16:9 box, visualization enlarged to fill it */
+  #view-brand-a .main-cases-grid .card-thumb {
+    aspect-ratio: 2.3 / 1;
+  }
+  #view-brand-a .main-cases-grid .data-thumb {
+    padding: 14px 20px;
+    gap: 10px;
+  }
+
+  /* 05 Additional Cases — same 2-col language, one step below Main visually, more compact */
+  #view-brand-a .additional-cases-grid {
+    opacity: 0.94;
+  }
+  @media (max-width: 900px) {
+    #view-brand-a .additional-cases-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  #view-brand-a .additional-cases-grid .work-thumb {
+    aspect-ratio: 2.7 / 1;
+  }
+  #view-brand-a .additional-cases-grid .data-thumb {
+    padding: 12px 18px;
+    gap: 8px;
+  }
+
+  /* ─── Brand A data thumbnails — HTML/CSS built, off-white/black tokens only ─── */
+  .data-thumb {
+    width: 100%; height: 100%;
+    padding: 18px 20px;
+    display: flex; flex-direction: column; justify-content: center;
+    gap: 10px;
+    background: var(--white);
+  }
+  .data-thumb-kicker {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--sub);
+  }
+  .data-thumb-subkicker {
+    font-size: 10px; font-weight: 700;
+    color: var(--sub);
+  }
+  /* bar item — name(+SKU)/value on one line, full-width meter below; scales up to show real product names */
+  .data-bars { display: flex; flex-direction: column; gap: 9px; }
+  .data-bar-item { display: flex; flex-direction: column; gap: 5px; }
+  .data-bar-item-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  }
+  .data-bar-name {
+    font-size: 12px; font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .data-bar-sku {
+    font-weight: 500; color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    margin-left: 2px;
+  }
+  .data-bar-value {
+    flex-shrink: 0; text-align: right;
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px; font-weight: 700;
+  }
+  .data-bar-track {
+    display: block; width: 100%; height: 12px;
+    background: #e8e4df;
+    border: 1px solid var(--border);
+  }
+  .data-bar-fill { display: block; height: 100%; background: var(--black); }
+  /* compact single-line bar row for non-product (aggregate) comparisons */
+  .data-bar-compact { display: flex; align-items: center; gap: 10px; }
+  .data-bar-compact-name {
+    width: 60px; flex-shrink: 0;
+    font-size: 11px; font-weight: 700;
+  }
+  .data-bar-compact .data-bar-track { flex: 1; width: auto; }
+  .data-bar-compact .data-bar-value {
+    width: 46px; flex-shrink: 0;
+    font-size: 12px;
+  }
+  .data-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 18px; }
+  .data-kpi-value {
+    font-family: 'Courier Prime', monospace;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .data-kpi-label {
+    font-size: 10px; color: var(--sub);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-top: 3px;
+  }
+  .data-kpi-solo { text-align: center; }
+  .data-funnel { display: flex; align-items: center; gap: 6px; }
+  .data-funnel-step {
+    flex: 1; text-align: center;
+    border: 1.5px solid var(--border);
+    padding: 10px 5px;
+    background: var(--white);
+  }
+  .data-funnel-value {
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px; font-weight: 700;
+  }
+  .data-funnel-label {
+    font-size: 9px; color: var(--sub);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-top: 4px;
+  }
+  .data-funnel-arrow { font-size: 13px; color: var(--sub); flex-shrink: 0; }
+  .data-compare {
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: 32px; height: 64px;
+  }
+  .data-compare-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .data-compare-value {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px; font-weight: 700;
+  }
+  .data-compare-bar { width: 40px; background: var(--black); }
+  .data-compare-label {
+    font-size: 10px; color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+  }
+  .data-thumb-footer { display: flex; justify-content: center; }
+  .data-compare-delta {
+    font-size: 11px; font-weight: 700;
+    border: 1px solid var(--border);
+    padding: 3px 9px;
+  }
+  .data-tag {
+    display: inline-block;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px dashed var(--border);
+    padding: 3px 8px;
+    color: var(--sub);
+    align-self: flex-start;
+  }
+
+  /* ─── CASE DETAIL — Notion 표 렌더링용 (기존 토큰만 사용) ─── */
+  .case-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid var(--border);
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .case-table th, .case-table td {
+    border: 1px solid var(--border-light);
+    padding: 10px 14px;
+    text-align: left;
+    line-height: 1.5;
+  }
+  .case-table thead th {
+    background: #f0ede8;
+    font-weight: 700;
+    border-bottom: 2px solid var(--border);
+  }
+
+  /* ════════════════════════
+     CASE DETAIL — design/readability QA pass
+     scoped to .case-detail-view (the 6 Brand A Case pages) / their #view-case-* ids only.
+     No effect on Brand A Main, HOME, WORKS, RAINS, LMOOD, Bootcamp.
+  ════════════════════════ */
+
+  /* compact paragraph rhythm across 01–07 — 일반 본문 문단 사이 여백만 축소(카드/박스 내부는 별도 규칙으로 margin-bottom:0 유지) */
+  .case-detail-view .section-block .hero-desc {
+    margin-bottom: 8px;
+  }
+  .case-detail-view .career-summary-list {
+    margin-bottom: 14px;
+  }
+
+  /* 3-column compact card grid — reused for Hypothesis (H1–H3) and MD Action (01–03) */
+  .case-detail-view .case-3col-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 6px 0 16px;
+  }
+  .case-detail-view .case-3col-grid .hero-desc {
+    margin-bottom: 0;
+    padding: 18px 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    line-height: 1.7;
+  }
+  @media (max-width: 900px) {
+    .case-detail-view .case-3col-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Additional Data Needed — small bordered callout, distinct from Data Limitation body copy.
+     Always the last paragraph of section 04 (Counterpoint / Data Limitation) across all 6 cases. */
+  .case-detail-view > section:nth-of-type(5) .hero-desc:last-of-type {
+    display: block;
+    border: 1.5px solid var(--border);
+    background: #f8f7f4;
+    padding: 14px 18px;
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+
+  /* Final Judgment (section 05) — tighter paragraph rhythm + horizontal Judgment Flow */
+  .case-detail-view > section:nth-of-type(6) .hero-desc {
+    margin-bottom: 6px;
+  }
+  .case-detail-view .judgment-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .case-detail-view .judgment-flow-step {
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .case-detail-view .judgment-flow-arrow {
+    font-size: 13px;
+    color: var(--sub);
+    font-family: 'Courier Prime', monospace;
+    flex-shrink: 0;
+  }
+
+  /* Case 1 — bestseller product rows: a bit more room + slightly larger text */
+  #view-case-bestseller-reorder > section:nth-of-type(2) .career-summary-list {
+    gap: 12px;
+    margin: 18px 0;
+  }
+  #view-case-bestseller-reorder > section:nth-of-type(2) .career-summary-list li {
+    font-size: 14px;
+  }
+
+  /* Case 2 — keep table design/size, just breathe a bit more than body copy around it */
+  #view-case-carryover-markdown > section:nth-of-type(2) .case-table,
+  #view-case-carryover-markdown > section:nth-of-type(4) .case-table {
+    margin-top: 10px;
+    margin-bottom: 26px;
+  }
+
+  /* Observation chart (Additional Case 1) — unchanged, ~18% smaller + centered, image ratio unchanged. */
+  #view-case-hero-price-crosssell > section:nth-of-type(2) .dashboard-visual {
+    max-width: 82%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Case 3 — Observation chart: further reduced + centered, image ratio unchanged */
+  #view-case-summer-redesign > section:nth-of-type(2) .dashboard-visual {
+    max-width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Case 4 — Observation chart: modest further reduction (~12%) + centered, image ratio unchanged */
+  #view-case-newcustomer-acquisition > section:nth-of-type(2) .dashboard-visual {
+    max-width: 72%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Case 3 — campaign-level performance dashboard (Analysis/Validation section): same treatment as Observation chart */
+  #view-case-summer-redesign > section:nth-of-type(4) .dashboard-visual {
+    max-width: 82%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ─── Main Case 01–04 QA pass round 2 (scoped to these 4 case ids only; Additional Cases untouched) ─── */
+
+  /* Case 1 — Observation chart: reduced to ~75-80% of its previous displayed size + centered */
+  #view-case-bestseller-reorder > section:nth-of-type(2) .dashboard-visual {
+    max-width: 67%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ─── Main Case 01–04 QA pass round 3 (spacing unification, KPI cards, mini-stat cards, flow diagram) ─── */
+
+  /* Section rhythm — trim excessive top/bottom padding, unify spacing across 01–07 and across the 4 cases */
+  #view-case-bestseller-reorder > section.section-block,
+  #view-case-carryover-markdown > section.section-block,
+  #view-case-summer-redesign > section.section-block,
+  #view-case-newcustomer-acquisition > section.section-block {
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+  #view-case-bestseller-reorder .section-header,
+  #view-case-carryover-markdown .section-header,
+  #view-case-summer-redesign .section-header,
+  #view-case-newcustomer-acquisition .section-header {
+    margin-bottom: 24px;
+  }
+
+  /* Validation Plan (section 07) — KPI categories as compact cards, same treatment across all Main + Additional Cases */
+  #view-case-bestseller-reorder > section:nth-of-type(8) .kpi-card-grid,
+  #view-case-carryover-markdown > section:nth-of-type(8) .kpi-card-grid,
+  #view-case-summer-redesign > section:nth-of-type(8) .kpi-card-grid,
+  #view-case-newcustomer-acquisition > section:nth-of-type(8) .kpi-card-grid,
+  #view-case-hero-price-crosssell > section:nth-of-type(8) .kpi-card-grid,
+  #view-case-cancel-return-hold > section:nth-of-type(8) .kpi-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 8px 0 14px;
+  }
+  #view-case-bestseller-reorder > section:nth-of-type(8) .kpi-card-grid .hero-desc,
+  #view-case-carryover-markdown > section:nth-of-type(8) .kpi-card-grid .hero-desc,
+  #view-case-summer-redesign > section:nth-of-type(8) .kpi-card-grid .hero-desc,
+  #view-case-newcustomer-acquisition > section:nth-of-type(8) .kpi-card-grid .hero-desc,
+  #view-case-hero-price-crosssell > section:nth-of-type(8) .kpi-card-grid .hero-desc,
+  #view-case-cancel-return-hold > section:nth-of-type(8) .kpi-card-grid .hero-desc {
+    margin-bottom: 0;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    line-height: 1.5;
+    font-size: 15px;
+  }
+  @media (max-width: 900px) {
+    #view-case-bestseller-reorder > section:nth-of-type(8) .kpi-card-grid,
+    #view-case-carryover-markdown > section:nth-of-type(8) .kpi-card-grid,
+    #view-case-summer-redesign > section:nth-of-type(8) .kpi-card-grid,
+    #view-case-newcustomer-acquisition > section:nth-of-type(8) .kpi-card-grid,
+    #view-case-hero-price-crosssell > section:nth-of-type(8) .kpi-card-grid,
+    #view-case-cancel-return-hold > section:nth-of-type(8) .kpi-card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* Additional Case 01 — only 2 KPI categories, use 2 columns instead of 3 */
+  #view-case-hero-price-crosssell > section:nth-of-type(8) .kpi-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* Additional Case 02 — single combined KPI card only */
+  #view-case-cancel-return-hold > section:nth-of-type(8) .kpi-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Case 2 — MD Action cards: equal height across all 3, set by the tallest (02)'s natural content height */
+  #view-case-carryover-markdown > section:nth-of-type(7) .case-3col-grid {
+    align-items: stretch;
+  }
+
+  /* Case 3 / Case 4 — unified horizontal KPI strip: one outer border, N equal segments with internal dividers */
+  .case-detail-view .kpi-strip {
+    display: grid;
+    border: 1.5px solid var(--border);
+    margin: 10px 0 16px;
+  }
+  .case-detail-view .kpi-strip-4 { grid-template-columns: repeat(4, 1fr); }
+  .case-detail-view .kpi-strip-5 { grid-template-columns: repeat(5, 1fr); }
+  .case-detail-view .kpi-strip-item {
+    padding: 12px 10px;
+    text-align: center;
+    border-right: 1px solid var(--border-light);
+  }
+  .case-detail-view .kpi-strip-item:last-child {
+    border-right: none;
+  }
+  .case-detail-view .kpi-strip-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sub);
+    margin-bottom: 5px;
+  }
+  .case-detail-view .kpi-strip-value {
+    display: block;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .case-detail-view .kpi-strip-asterisk {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sub);
+    margin-left: 1px;
+  }
+  /* Funnel KPI (Case 3 Analysis/Validation) — one step larger, reads as the key validation result */
+  .case-detail-view .kpi-strip.kpi-strip-emphasis .kpi-strip-value {
+    font-size: 21px;
+  }
+  @media (max-width: 900px) {
+    .case-detail-view .kpi-strip-4,
+    .case-detail-view .kpi-strip-5 {
+      grid-template-columns: 1fr;
+    }
+    .case-detail-view .kpi-strip-item {
+      border-right: none;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .case-detail-view .kpi-strip-item:last-child {
+      border-bottom: none;
+    }
+  }
+
+  /* Final Judgment (section 05) — Judgment Flow enlarged, more breathing room from body copy, centered */
+  #view-case-bestseller-reorder .judgment-flow,
+  #view-case-carryover-markdown .judgment-flow,
+  #view-case-summer-redesign .judgment-flow,
+  #view-case-newcustomer-acquisition .judgment-flow,
+  #view-case-hero-price-crosssell .judgment-flow,
+  #view-case-cancel-return-hold .judgment-flow {
+    justify-content: center;
+    margin-top: 32px;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  #view-case-bestseller-reorder .judgment-flow-step,
+  #view-case-carryover-markdown .judgment-flow-step,
+  #view-case-summer-redesign .judgment-flow-step,
+  #view-case-newcustomer-acquisition .judgment-flow-step,
+  #view-case-hero-price-crosssell .judgment-flow-step,
+  #view-case-cancel-return-hold .judgment-flow-step {
+    padding: 13px 18px;
+    font-size: 14.5px;
+  }
+  #view-case-bestseller-reorder .judgment-flow-arrow,
+  #view-case-carryover-markdown .judgment-flow-arrow,
+  #view-case-summer-redesign .judgment-flow-arrow,
+  #view-case-newcustomer-acquisition .judgment-flow-arrow,
+  #view-case-hero-price-crosssell .judgment-flow-arrow,
+  #view-case-cancel-return-hold .judgment-flow-arrow {
+    font-size: 15px;
+  }
+
+  /* kpi-strip — 3-column variant (Additional Case 02 Observation: Cancel/Return/Total) */
+  .case-detail-view .kpi-strip-3 { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 900px) {
+    .case-detail-view .kpi-strip-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ─── PLACEHOLDER STYLE ─── */
+  .ph { color: #ccc; font-style: italic; }
+  .ph-block {
+    background: repeating-linear-gradient(
+      -45deg, #f0ede8, #f0ede8 4px, #e8e4df 4px, #e8e4df 8px
+    );
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ccc; }
+</style>
+</head>
+<body>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<aside class="sidebar">
+  <div class="profile-section">
+    <div class="avatar-wrap">
+      <img src="photo.jpg" alt="profile">
+    </div>
+
+    <!-- ✏️ 이름 수정 -->
+    <div class="profile-name">최환석</div>
+
+    <!-- ✏️ 지역 수정 -->
+    <div class="profile-location">📍 Korea / Seoul</div>
+
+    <!-- ✏️ 직무 수정 -->
+    <div class="profile-role">Fashion MD</div>
+
+    <!-- ✏️ 한 줄 Identity 수정 -->
+    <p class="profile-identity">
+      시장성과 판매 흐름을 연결해<br>
+      상품을 기획하는 MD.
+    </p>
+  </div>
+
+  <nav class="nav-section">
+    <div class="nav-label">// Menu_Index</div>
+    <ul class="nav-menu">
+      <li>
+        <button class="active" data-view="home" onclick="showView('home')">
+          HOME <span class="nav-arrow">→</span>
+        </button>
+      </li>
+      <li>
+        <button data-view="works" onclick="showView('works')">
+          WORKS <span class="nav-arrow">→</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    // FASHION_MD_PORTFOLIO<br>
+    © 2026 최환석
+  </div>
+</aside>
+
+<!-- ════════════ MAIN ════════════ -->
+<main class="main">
+
+  <!-- ───────── HOME VIEW ───────── -->
+  <div class="view active" id="view-home">
+
+    <!-- Hero -->
+    <section class="home-hero">
+      <div class="hero-eyebrow">// FASHION_MD_PORTFOLIO</div>
+      <!-- ✏️ 메인 타이틀 수정 -->
+      <h1 class="hero-title">Fashion Merchandising<br>Portfolio</h1>
+      <!-- ✏️ 소개 문구 수정 -->
+      <p class="hero-desc">
+        Product Planning · Merchandising · Promotion · Data · AI
+      </p>
+    </section>
+
+    <!-- Career -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">01.</span>
+          Career
+          <span class="section-sub">Experience</span>
+        </div>
+      </div>
+
+      <div class="career-list">
+        <div class="career-item">
+          <div class="career-period">2026.03 — 2026.04</div>
+          <div class="career-body">
+            <div class="career-company">LMOOD</div>
+            <div class="career-role">MD팀 · MD</div>
+            <ul class="career-summary-list">
+              <li>무신사·29CM·자사몰 상품 운영 및 판매 데이터 모니터링</li>
+              <li>판매량 기반 리오더 검토·재고 운영 및 프로모션 관리</li>
+              <li>인플루언서 시딩·협찬 운영 및 콘텐츠 성과 모니터링</li>
+            </ul>
+          </div>
+        </div>
+        <div class="career-item">
+          <div class="career-period">2024.08 — 2025.09</div>
+          <div class="career-body">
+            <div class="career-company">RAINS</div>
+            <div class="career-role">상품기획팀 · 인턴</div>
+            <ul class="career-summary-list">
+              <li>트렌드·경쟁 브랜드 분석 기반 시즌 상품 기획 및 1·2차 발주 참여</li>
+              <li>판매 데이터 기반 SKU·오더리스트·출고 및 재고 운영 관리</li>
+              <li>팝업·GWP·SNS 착장 기획 등 상품과 마케팅 연계 업무 지원</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Capabilities -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">02.</span>
+          Core Capabilities
+          <span class="section-sub">Skills</span>
+        </div>
+      </div>
+
+      <div class="capability-grid">
+        <div class="capability-item">
+          <span class="capability-num">01</span>
+          <div class="capability-label">Product Planning &amp; Merchandising</div>
+          <div class="capability-desc">시장·경쟁 분석 · 시즌 상품 기획 · 상품 운영</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">02</span>
+          <div class="capability-label">Buying / Inventory</div>
+          <div class="capability-desc">발주 · 판매량 모니터링 · 재고 및 리오더 관리</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">03</span>
+          <div class="capability-label">Sales / Promotion</div>
+          <div class="capability-desc">채널별 판매 관리 · 프로모션 · 시딩/협찬 운영</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">04</span>
+          <div class="capability-label">Data Analysis</div>
+          <div class="capability-desc">판매·상품·고객 데이터 분석 · 시각화 · MD Action</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">05</span>
+          <div class="capability-label">AI Workflow</div>
+          <div class="capability-desc">AI 활용 데이터 분석 · 시각화 · 업무 효율화</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Works -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">03.</span>
+          Selected Works
+          <span class="section-sub">Works</span>
+        </div>
+        <button class="section-link" onclick="showView('works')">View All →</button>
+      </div>
+
+      <div class="works-grid cols-3 selected-works-grid">
+        <!-- ✏️ 각 상세 view로 바로 연결됨 — 썸네일은 Notion에서 받은 프로젝트 이미지 사용 -->
+        <a href="#" class="work-card" data-view="rains" onclick="showView('rains'); return false;">
+          <div class="work-thumb proj-thumb">
+            <img src="images/rains-thumbnail.png" alt="RAINS">
+          </div>
+          <div class="work-info">
+            <div class="work-category">Professional Experience</div>
+            <div class="work-title">RAINS</div>
+          </div>
+        </a>
+        <a href="#" class="work-card" data-view="lmood" onclick="showView('lmood'); return false;">
+          <div class="work-thumb proj-thumb">
+            <img src="images/lmood-thumbnail.png" alt="LMOOD">
+          </div>
+          <div class="work-info">
+            <div class="work-category">Professional Experience</div>
+            <div class="work-title">LMOOD</div>
+          </div>
+        </a>
+        <a href="#" class="work-card" data-view="brand-a" onclick="showView('brand-a'); return false;">
+          <div class="work-thumb proj-thumb">
+            <img src="images/brand-a-thumbnail.png" alt="Brand A">
+          </div>
+          <div class="work-info">
+            <div class="work-category">AI &amp; Data Project</div>
+            <div class="work-title">Brand A</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </div><!-- /home -->
+
+
+  <!-- ───────── BLOG VIEW ───────── -->
+  <div class="view" id="view-blog">
+
+    <div class="blog-header">
+      <div>
+        <h1 class="blog-title">Blog</h1>
+        <!-- ✏️ 포스트 수는 Notion DB 연결 후 자동으로 -->
+        <div class="blog-count">// 12 articles</div>
+      </div>
+    </div>
+
+    <!-- Category Filter -->
+    <!-- ✏️ 카테고리는 Notion DB 속성에서 정의한 Select 값과 맞추기 -->
+    <div class="cat-filter">
+      <button class="cat-btn active" onclick="filterCat(this, 'all')">All</button>
+      <button class="cat-btn" onclick="filterCat(this, 'Dashboard Design')">Dashboard Design</button>
+      <button class="cat-btn" onclick="filterCat(this, 'AI & BI')">AI &amp; BI</button>
+      <button class="cat-btn" onclick="filterCat(this, 'Tableau Tips')">Tableau Tips</button>
+      <button class="cat-btn" onclick="filterCat(this, 'Chart Types')">Chart Types</button>
+      <button class="cat-btn" onclick="filterCat(this, 'Community')">Community</button>
+    </div>
+
+    <!-- Blog Grid -->
+    <!-- ✏️ 아래 카드들은 Notion API로 자동 생성됨 — 직접 수정 불필요 -->
+    <div class="blog-grid" id="blog-grid">
+
+      <a href="#" class="blog-card" data-cat="Dashboard Design">
+        <div class="card-thumb ph-block">커버 이미지</div>
+        <div class="card-body">
+          <span class="cat-badge cat-c3">Dashboard Design</span>
+          <div class="card-title">Mastering Dashboard Design: From Good to Unmissable</div>
+          <div class="card-desc">The design principles that separate dashboards people actually use from dashboards that collect dust.</div>
+        </div>
+        <div class="card-footer">
+          <span>8 min read</span>
+          <span>2025.06.15</span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-cat="AI & BI">
+        <div class="card-thumb ph-block">커버 이미지</div>
+        <div class="card-body">
+          <span class="cat-badge cat-c2">AI &amp; BI</span>
+          <div class="card-title">Claude Code로 대시보드 자동화하기</div>
+          <div class="card-desc">Claude Code와 Notion MCP를 연결해서 콘텐츠 업데이트를 완전 자동화한 방법.</div>
+        </div>
+        <div class="card-footer">
+          <span>6 min read</span>
+          <span>2025.05.28</span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-cat="Tableau Tips">
+        <div class="card-thumb ph-block">커버 이미지</div>
+        <div class="card-body">
+          <span class="cat-badge cat-c1">Tableau Tips</span>
+          <div class="card-title">LOD 표현식 완전 정복 — FIXED vs INCLUDE vs EXCLUDE</div>
+          <div class="card-desc">언제 어떤 LOD를 쓰는지, 실무 예시 5가지로 정리했습니다.</div>
+        </div>
+        <div class="card-footer">
+          <span>10 min read</span>
+          <span>2025.05.10</span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-cat="Dashboard Design">
+        <div class="card-thumb ph-block">커버 이미지</div>
+        <div class="card-body">
+          <span class="cat-badge cat-c3">Dashboard Design</span>
+          <div class="card-title">Building a KPI Dashboard: Step-by-Step Guide</div>
+          <div class="card-desc">Key metrics, segment analysis, and regional breakdowns — built from scratch.</div>
+        </div>
+        <div class="card-footer">
+          <span>7 min read</span>
+          <span>2025.04.22</span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-cat="Chart Types">
+        <div class="card-thumb ph-block">커버 이미지</div>
+        <div class="card-body">
+          <span class="cat-badge cat-c4">Chart Types</span>
+          <div class="card-title">언제 막대 차트 말고 다른 걸 써야 하나요?</div>
+          <div class="card-desc">비교·추세·분포·관계 — 목적에 따른 차트 선택 가이드.</div>
+        </div>
+        <div class="card-footer">
+          <span>5 min read</span>
+          <span>2025.04.05</span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card" data-cat="Community">
+        <div class="card-thumb ph-block">커버 이미지</div>
+        <div class="card-body">
+          <span class="cat-badge cat-c5">Community</span>
+          <div class="card-title">Building Sustainable BI Mentorship: 100+ Students</div>
+          <div class="card-desc">Education as community building — what I learned from teaching data analytics.</div>
+        </div>
+        <div class="card-footer">
+          <span>5 min read</span>
+          <span>2025.03.18</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /blog -->
+
+
+  <!-- ───────── WORKS VIEW ───────── -->
+  <div class="view" id="view-works">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="hero-eyebrow">// SELECTED_WORKS</div>
+      <h1 class="page-title">Works</h1>
+      <p class="page-desc">패션 MD 실무 경험과 데이터 기반 개인 프로젝트를 정리했습니다.</p>
+    </section>
+
+    <!-- Works List -->
+    <div class="blog-grid">
+      <!-- ✏️ RAINS 상세로 연결 -->
+      <a href="#" class="blog-card" data-view="rains" onclick="showView('rains'); return false;">
+        <div class="card-thumb proj-thumb">
+          <img src="images/rains-thumbnail.png" alt="RAINS">
+        </div>
+        <div class="card-body">
+          <span class="cat-badge">Professional Experience</span>
+          <div class="card-title">RAINS</div>
+          <div class="card-desc">상품 기획·바잉부터 상품 운영과 프로모션까지 경험한 MD 실무</div>
+        </div>
+        <div class="card-footer">
+          <span>FASHION MD</span>
+          <span>View Project →</span>
+        </div>
+      </a>
+
+      <!-- ✏️ LMOOD 상세로 연결 -->
+      <a href="#" class="blog-card" data-view="lmood" onclick="showView('lmood'); return false;">
+        <div class="card-thumb proj-thumb">
+          <img src="images/lmood-thumbnail.png" alt="LMOOD">
+        </div>
+        <div class="card-body">
+          <span class="cat-badge">Professional Experience</span>
+          <div class="card-title">LMOOD</div>
+          <div class="card-desc">판매 데이터 모니터링을 기반으로 재고·리오더·프로모션을 운영한 MD 실무</div>
+        </div>
+        <div class="card-footer">
+          <span>FASHION MD</span>
+          <span>View Project →</span>
+        </div>
+      </a>
+
+      <!-- ✏️ Brand A 상세로 연결 -->
+      <a href="#" class="blog-card" data-view="brand-a" onclick="showView('brand-a'); return false;">
+        <div class="card-thumb proj-thumb">
+          <img src="images/brand-a-thumbnail.png" alt="Brand A">
+        </div>
+        <div class="card-body">
+          <span class="cat-badge">AI &amp; Data Project</span>
+          <div class="card-title">Brand A</div>
+          <div class="card-desc">AI &amp; Data-driven Merchandising Project</div>
+        </div>
+        <div class="card-footer">
+          <span>PERSONAL PROJECT</span>
+          <span>View Project →</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Earlier Project — RAINS/LMOOD/Brand A보다 가벼운 리스트형 컴포넌트로 시각적 우선순위를 낮춤 -->
+    <section class="section-block">
+      <div class="blog-preview-list">
+        <a href="#" class="post-preview-row" data-view="bootcamp" onclick="showView('bootcamp'); return false;">
+          <div class="post-row-tag">
+            <span class="cat-badge">Supporting Work</span>
+          </div>
+          <div class="post-row-info">
+            <div class="post-row-title">Fashion MD Bootcamp</div>
+            <div class="post-row-desc">시장·경쟁 분석부터 시즌 전략과 판매 분석까지 수행한 Fashion MD 프로젝트</div>
+          </div>
+          <div class="post-row-meta ph">View →</div>
+        </a>
+      </div>
+    </section>
+
+  </div><!-- /works -->
+
+
+  <!-- ───────── RAINS DETAIL VIEW ───────── -->
+  <!-- ✏️ Notion Works DB > RAINS 페이지 콘텐츠 연결 (notion-fetch 결과를 이 아래 정적 마크업에 반영, 섹션/이미지 순서는 Notion과 동일) -->
+  <div class="view" id="view-rains">
+
+    <!-- Project / Company Header -->
+    <section class="page-header">
+      <div class="hero-eyebrow">// EXPERIENCE</div>
+      <h1 class="page-title">RAINS</h1>
+    </section>
+
+    <!-- Project Info: Overview + Role/Period 통합 -->
+    <section class="section-block project-info">
+      <div class="project-info-grid">
+        <div class="project-info-overview">
+          <span class="project-info-label">Overview</span>
+          <p class="hero-desc">시장·경쟁 브랜드 리서치와 바잉·상품 운영</p>
+        </div>
+        <div class="project-info-role">
+          <span class="project-info-label">Role / Period</span>
+          <div class="career-list">
+            <div class="career-item">
+              <div class="career-period">2024.08 — 2025.09</div>
+              <div class="career-body">
+                <div class="career-role">상품기획팀 · 인턴</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Market Trend & Competitor Research (시장 트렌드 및 경쟁 브랜드 상품 분석) -->
+    <section class="section-block rains-market-section">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">01.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Market Trend &amp; Competitor Research</span>
+            <span class="section-sub">시장 트렌드 및 경쟁 브랜드 상품 분석</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">01.</span>
+        <div class="work-section-title">Backpack Trend Research</div>
+        <div class="work-section-images work-gallery-4">
+          <img class="work-section-img img-main" src="images/rains/01-backpack-1.png" alt="Backpack Trend Research 1">
+          <img class="work-section-img" src="images/rains/01-backpack-2.png" alt="Backpack Trend Research 2">
+          <img class="work-section-img" src="images/rains/01-backpack-3.png" alt="Backpack Trend Research 3">
+          <img class="work-section-img" src="images/rains/01-backpack-4.png" alt="Backpack Trend Research 4">
+        </div>
+        <p class="work-section-desc">가방 시장의 주요 상품을 조사하고, 실루엣·소재와 소비자 리뷰를 바탕으로 상품 트렌드와 주요 니즈를 분석했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">02.</span>
+        <div class="work-section-title">Rainwear Market Research</div>
+        <div class="work-section-images work-gallery-3">
+          <img class="work-section-img img-main" src="images/rains/02-rainwear-1.png" alt="Rainwear Market Research 1">
+          <img class="work-section-img" src="images/rains/02-rainwear-2.png" alt="Rainwear Market Research 2">
+          <img class="work-section-img" src="images/rains/02-rainwear-3.png" alt="Rainwear Market Research 3">
+        </div>
+        <p class="work-section-desc">고프코어와 스트릿 브랜드를 중심으로 레인웨어의 소재·기능·디자인 요소를 비교하고, 판매 채널의 주요 상품을 함께 조사해 시장 특성을 파악했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">03.</span>
+        <div class="work-section-title">AW Competitor / New Product Research</div>
+        <div class="work-section-images cols-1">
+          <img class="work-section-img aw-evidence-img" src="images/rains/03-aw-1.png" alt="AW Competitor / New Product Research 1">
+          <img class="work-section-img aw-evidence-img" src="images/rains/03-aw-2.png" alt="AW Competitor / New Product Research 2">
+          <img class="work-section-img aw-evidence-img" src="images/rains/03-aw-3.png" alt="AW Competitor / New Product Research 3">
+        </div>
+        <p class="work-section-desc">AW 시즌 경쟁 브랜드의 신상품을 품명·가격·소재 등의 기준으로 조사하고, 카테고리별 스타일·SKU와 주요 상품 특성을 정리했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 02. Buying & Product Operations (바잉 및 상품 운영) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">02.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Buying &amp; Product Operations</span>
+            <span class="section-sub">바잉 및 상품 운영</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">01.</span>
+        <div class="work-section-title">Order List Management</div>
+        <div class="work-section-images cols-1">
+          <img class="work-section-img op-evidence-img" src="images/rains/04-orderlist-1.png" alt="Order List Management">
+        </div>
+        <p class="work-section-desc">시즌 1·2차 오더 업무에 참여하며 기존 오더리스트의 상품별 수량·가격 데이터를 업데이트하고 관리했습니다. 또한 시즌 상품의 출고맵을 작성하며 상품 운영 일정을 관리했습니다.</p>
+        <p class="masking-note">※ 실제 업무 자료를 기반으로 구성했으며, 기업 및 업무 관련 정보 보호를 위해 일부 정보는 마스킹 처리했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">02.</span>
+        <div class="work-section-title">Product / ERP Registration</div>
+        <div class="work-section-images cols-1">
+          <img class="work-section-img op-evidence-img" src="images/rains/05-erp-1.png" alt="Product / ERP Registration">
+        </div>
+        <p class="work-section-desc">신규 상품의 품번을 생성하고 상품 정보를 정리해 ERP에 등록했으며, 상품정보조회에서 등록 정보를 확인하고 관리했습니다.</p>
+        <p class="masking-note">※ 실제 업무 자료를 기반으로 구성했으며, 기업 및 업무 관련 정보 보호를 위해 일부 정보는 마스킹 처리했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">03.</span>
+        <div class="work-section-title">Invoice &amp; Logistics</div>
+        <div class="work-section-images cols-1">
+          <img class="work-section-img op-evidence-img" src="images/rains/06-invoice-1.png" alt="Invoice &amp; Logistics">
+        </div>
+        <p class="work-section-desc">수입 상품의 인보이스 등록 및 관련 데이터를 관리하며 바잉 이후 입고·물류 업무를 지원했습니다.</p>
+        <p class="masking-note">※ 실제 업무 자료를 기반으로 구성했으며, 기업 및 업무 관련 정보 보호를 위해 일부 정보는 마스킹 처리했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">04.</span>
+        <div class="work-section-title">Additional Operations</div>
+        <div class="career-role">기타 상품 운영 업무</div>
+        <ul class="career-summary-list">
+          <li>제품 택 및 케어라벨 발주·관리</li>
+          <li>수입 상품 적하보험 가입을 위한 리스트 작성</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 03. Retail / Pop-up & Promotion (팝업·매장 오픈 및 프로모션 운영) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">03.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Retail / Pop-up &amp; Promotion</span>
+            <span class="section-sub">팝업·매장 오픈 및 프로모션 운영</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">01.</span>
+        <div class="work-section-title">Pop-up / Store Opening</div>
+        <div class="work-section-images cols-2">
+          <img class="work-section-img popup-evidence-img" src="images/rains/07-popup-1.png" alt="Pop-up / Store Opening 1">
+          <img class="work-section-img popup-evidence-img" src="images/rains/07-popup-2.png" alt="Pop-up / Store Opening 2">
+        </div>
+        <p class="work-section-desc">국내 팝업 및 매장 오픈 과정에 참여하며 상품 준비와 운영 관련 업무를 지원했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <span class="work-section-num">02.</span>
+        <div class="work-section-title">Gacha Event / GWP Promotion</div>
+        <div class="work-section-images gwp-gallery cols-3">
+          <img class="work-section-img" src="images/rains/08-gwp-1.jpg" alt="Gacha Event / GWP Promotion 1">
+          <img class="work-section-img" src="images/rains/08-gwp-2.jpg" alt="Gacha Event / GWP Promotion 2">
+          <img class="work-section-img" src="images/rains/08-gwp-3.jpg" alt="Gacha Event / GWP Promotion 3">
+        </div>
+        <p class="work-section-desc">팝업 이벤트를 위한 가챠 프로모션 기획을 지원하고, 업체 서칭 및 단가 비교를 통해 제작 업체를 선정했습니다. 기기 제작 커뮤니케이션과 캡슐·GWP 구성 등 이벤트 운영 준비에 참여했습니다.</p>
+      </div>
+    </section>
+
+    <!-- Back to Works -->
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('works')">← Back to Works</button>
+    </section>
+
+  </div><!-- /rains -->
+
+
+  <!-- ───────── LMOOD DETAIL VIEW ───────── -->
+  <!-- ✏️ Notion Works DB > LMOOD 페이지 콘텐츠 연결 (notion-fetch 결과를 이 아래 정적 마크업에 반영, 섹션/이미지 순서는 Notion과 동일) -->
+  <div class="view" id="view-lmood">
+
+    <!-- Project / Company Header -->
+    <section class="page-header">
+      <div class="hero-eyebrow">// EXPERIENCE</div>
+      <h1 class="page-title">LMOOD</h1>
+    </section>
+
+    <!-- Project Info: Overview + Role/Period 통합 -->
+    <section class="section-block project-info">
+      <div class="project-info-grid">
+        <div class="project-info-overview">
+          <span class="project-info-label">Overview</span>
+          <p class="hero-desc">온라인 채널 판매 관리와 상품·프로모션 운영</p>
+        </div>
+        <div class="project-info-role">
+          <span class="project-info-label">Role / Period</span>
+          <div class="career-list">
+            <div class="career-item">
+              <div class="career-period">2026.03 — 2026.04</div>
+              <div class="career-body">
+                <div class="career-role">MD팀 · MD</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Sales Monitoring & Product Operations (판매 현황 및 상품 운영) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">01.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Sales Monitoring &amp; Product Operations</span>
+            <span class="section-sub">판매 현황 및 상품 운영</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-images cols-2">
+          <img class="work-section-img lmood-sales-img" src="images/lmood/01-sales-1.png" alt="Sales Monitoring & Product Operations 1">
+          <img class="work-section-img lmood-sales-img" src="images/lmood/02-sales-2.png" alt="Sales Monitoring & Product Operations 2">
+        </div>
+        <p class="work-section-desc">무신사·29CM의 상품별 판매 현황을 일별로 확인하고, 주간·월간 단위로 판매량을 집계하며 채널별 판매 흐름을 모니터링했습니다. 또한 브랜드 일별·월별 매출을 집계·관리하며 전반적인 매출 흐름을 파악했습니다.</p>
+        <p class="masking-note">※ 실제 업무 자료를 기반으로 구성했으며, 기업 및 업무 관련 정보 보호를 위해 일부 정보는 마스킹 처리했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 02. Reorder Management (리오더 운영) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">02.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Reorder Management</span>
+            <span class="section-sub">리오더 운영</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-images cols-1">
+          <img class="work-section-img reorder-evidence-img" src="images/lmood/02-reorder-1.png" alt="Reorder Management">
+        </div>
+        <p class="work-section-desc">판매수량과 현재 재고를 기준으로 상품별 재고 현황을 확인하고, 리오더 검토 및 수량 관리 업무에 참여했습니다. 리오더 이후 예상 재고와 누적 입고 현황을 함께 관리하며 상품별 재고 흐름을 확인했습니다.</p>
+        <p class="masking-note">※ 실제 업무 자료를 기반으로 구성했으며, 기업 및 업무 관련 정보 보호를 위해 일부 정보는 마스킹 처리했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 03. Promotion & Discount Operations (프로모션 및 할인 운영) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">03.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Promotion &amp; Discount Operations</span>
+            <span class="section-sub">프로모션 및 할인 운영</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-images cols-3">
+          <img class="work-section-img lmood-promo-img" src="images/lmood/03-promotion-1.png" alt="Promotion & Discount Operations 1">
+          <img class="work-section-img lmood-promo-img" src="images/lmood/03-promotion-2.png" alt="Promotion & Discount Operations 2">
+          <img class="work-section-img lmood-promo-img" src="images/lmood/03-promotion-3.png" alt="Promotion & Discount Operations 3">
+        </div>
+        <p class="work-section-desc">무신사·29CM의 기획전 및 프로모션 일정에 맞춰 플랫폼별 양식에 상품 정보를 정리하고 적용 할인율을 작성했습니다. 또한 기획전별 할인율을 취합해 상품별 평균 할인 수준을 확인하고 프로모션 운영에 활용했습니다.</p>
+        <p class="masking-note">※ 실제 업무 자료를 기반으로 구성했으며, 기업 및 업무 관련 정보 보호를 위해 일부 정보는 마스킹 처리했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 04. Additional Operations (기타 온라인 상품·콘텐츠 운영) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">04.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Additional Operations</span>
+            <span class="section-sub">기타 온라인 상품·콘텐츠 운영</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="additional-ops-grid">
+        <div class="additional-op-item">
+          <div class="career-role">Product Registration</div>
+          <p class="career-summary">무신사·29CM·카페24 신규 시즌 상품 등록 및 상품정보 업데이트</p>
+        </div>
+        <div class="additional-op-item">
+          <div class="career-role">Online Store Operations</div>
+          <p class="career-summary">온라인 채널별 재고 현황 확인 및 재고 정보 수정, 자사몰 상품 진열·운영</p>
+        </div>
+        <div class="additional-op-item">
+          <div class="career-role">Content Operations</div>
+          <p class="career-summary">무신사 스냅 및 메일링 콘텐츠 업데이트</p>
+        </div>
+        <div class="additional-op-item">
+          <div class="career-role">Seeding &amp; Collaboration</div>
+          <p class="career-summary">인플루언서·패션 유튜버 시딩 운영 및 협찬 관련 커뮤니케이션</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Back to Works -->
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('works')">← Back to Works</button>
+    </section>
+
+  </div><!-- /lmood -->
+
+
+  <!-- ───────── FASHION MD BOOTCAMP DETAIL VIEW (RAINS/LMOOD와 동일한 Work Detail Template) ───────── -->
+  <!-- ✏️ Notion Works DB > Fashion MD Bootcamp 페이지 콘텐츠 연결 (notion-fetch 결과를 이 아래 정적 마크업에 반영, 섹션/이미지 순서는 Notion과 동일) -->
+  <div class="view" id="view-bootcamp">
+
+    <!-- Header -->
+    <section class="page-header">
+      <div class="hero-eyebrow">// EARLIER_PROJECT</div>
+      <h1 class="page-title">Fashion MD Bootcamp</h1>
+    </section>
+
+    <!-- Project Info: Overview + Period/Program 통합 -->
+    <section class="section-block project-info">
+      <div class="project-info-grid">
+        <div class="project-info-overview">
+          <span class="project-info-label">Overview</span>
+          <p class="hero-desc">무신사 스탠다드의 MD라는 가정 아래 시장·경쟁사를 분석하고, SS 시즌 상품 전략과 판매 대응 방향을 제안한 프로젝트</p>
+        </div>
+        <div class="project-info-role">
+          <span class="project-info-label">Period / Program</span>
+          <div class="career-list">
+            <div class="career-item">
+              <div class="career-period">2023.10 — 2023.11</div>
+              <div class="career-body">
+                <div class="career-role">Fashion MD Bootcamp</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Market & Competitor Analysis (시장·경쟁사 분석) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">01.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Market &amp; Competitor Analysis</span>
+            <span class="section-sub">시장·경쟁사 분석</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-images cols-1">
+          <img class="work-section-img bootcamp-market-img" src="images/bootcamp/01-market-1.png" alt="Market & Competitor Analysis">
+        </div>
+        <p class="work-section-desc">주요 경쟁 브랜드의 스타일과 상품 구성을 비교하고, 브랜드별 디자인 및 콜라보레이션 전개의 차이를 분석했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 02. SS Season Strategy (시즌 상품 전략) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">02.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">SS Season Strategy</span>
+            <span class="section-sub">시즌 상품 전략</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-images cols-1">
+          <img class="work-section-img bootcamp-strategy-img" src="images/bootcamp/02-strategy-1.png" alt="SS Season Strategy 1">
+          <img class="work-section-img bootcamp-strategy-img" src="images/bootcamp/02-strategy-2.png" alt="SS Season Strategy 2">
+        </div>
+        <p class="work-section-desc">고객 리뷰와 경쟁 브랜드 분석을 바탕으로 핵심 상품·컬러·소재 방향을 정리하고, SS 시즌 상품 전략과 차별화 방향을 제안했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 03. Sales Analysis & Response (판매 분석 및 매출 대응) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="section-num">03.</span>
+          <div class="section-title-text">
+            <span class="section-title-en">Sales Analysis &amp; Response</span>
+            <span class="section-sub">판매 분석 및 매출 대응</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-images cols-1">
+          <img class="work-section-img bootcamp-sales-img" src="images/bootcamp/03-sales-1.png" alt="Sales Analysis & Response">
+        </div>
+        <p class="work-section-desc">주간·월간 매출과 아이템별 판매 성과를 전주·전년 동기간과 비교하고, 판매 변화의 원인을 해석해 상품별 발주 및 매출 대응 방향을 제안했습니다.</p>
+      </div>
+    </section>
+
+    <!-- Back to Works -->
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('works')">← Back to Works</button>
+    </section>
+
+  </div><!-- /bootcamp -->
+
+
+  <!-- ───────── BRAND A DETAIL VIEW ───────── -->
+  <div class="view" id="view-brand-a">
+
+    <!-- Project Header -->
+    <section class="page-header">
+      <div class="hero-eyebrow">// AI_DATA_MERCHANDISING_PROJECT</div>
+      <h1 class="page-title">Brand A</h1>
+      <div class="career-role">AI &amp; Data-driven Merchandising Project</div>
+    </section>
+
+    <!-- 01. Brand Introduction -->
+    <section class="section-block brand-intro-section">
+      <div class="section-header">
+        <div class="section-title"><span class="section-num">01.</span>Brand Introduction</div>
+      </div>
+      <p class="hero-desc">패션 MD 관점에서 판매·상품·재고·마케팅·고객 데이터의 이상징후를 발견하고, 가설 검증을 통해 MD Action으로 연결한 데이터 기반 Merchandising 프로젝트입니다.</p>
+      <p class="hero-desc">Brand A는 20–30대를 타깃으로 의류와 액세서리를 전개하는 가상의 컨템포러리 패션 브랜드입니다. 포트폴리오·실습 목적으로 구축한 합성 데이터를 기반으로 상품·재고·마케팅·고객 관점의 MD 의사결정 과정을 분석했습니다.</p>
+      <div class="capability-grid">
+        <div class="capability-item">
+          <span class="capability-num">Target</span>
+          <div class="capability-label">20–30대</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">Categories</span>
+          <div class="capability-label">Hoodie · Sweatshirt · Outerwear · Pants · Accessories</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">Price Range</span>
+          <div class="capability-label">₩40K–₩200K</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">Channels</span>
+          <div class="capability-label">Own Mall · MUSINSA · 29CM · KREAM</div>
+        </div>
+        <div class="capability-item">
+          <span class="capability-num">Project Objective</span>
+          <div class="capability-label">Data-driven Merchandising Decision</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. Data & Analysis Pipeline -->
+    <section class="section-block pipeline-section">
+      <div class="section-header">
+        <div class="section-title"><span class="section-num">02.</span>Data &amp; Analysis Pipeline</div>
+      </div>
+      <div class="workflow-flow">
+        <span class="workflow-step">Raw Data</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">Data Structure</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">Analysis</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">Dashboard</span>
+        <span class="workflow-arrow">→</span>
+        <span class="workflow-step">MD Decision</span>
+      </div>
+      <p class="hero-desc">판매·상품·고객·캠페인 데이터를 분석 가능한 구조로 정리하고, Marketing · Merchandising · Retention 관점의 분석을 거쳐 MD 의사결정으로 연결했습니다. AI는 데이터 처리와 분석 과정을 보조하는 도구로 활용하고, 최종 가설 설정과 판단은 MD 관점에서 수행했습니다.</p>
+
+      <div class="works-grid cols-3 pipeline-grid">
+        <div class="work-card">
+          <div class="work-thumb"><img src="images/brand-a/01-project-structure.png" alt="Project Structure"></div>
+          <div class="work-info">
+            <div class="work-category">Pipeline Reference</div>
+            <div class="work-title">Project Structure</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb"><img src="images/brand-a/02-raw-data.png" alt="Raw Data"></div>
+          <div class="work-info">
+            <div class="work-category">Pipeline Reference</div>
+            <div class="work-title">Raw Data</div>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="work-thumb"><img src="images/brand-a/03-data-structure.png" alt="Data Structure"></div>
+          <div class="work-info">
+            <div class="work-category">Pipeline Reference</div>
+            <div class="work-title">Data Structure</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03. Dashboard -->
+    <section class="section-block dashboard-section">
+      <div class="section-header">
+        <div class="section-title"><span class="section-num">03.</span>Dashboard</div>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-title">Marketing</div>
+        <div class="dashboard-visual"><img src="images/brand-a/04-dashboard-marketing.png" alt="Marketing Dashboard"></div>
+        <p class="hero-desc">채널·캠페인별 광고비, ROAS, CTR, CVR, CPA를 비교해 마케팅 효율과 개선이 필요한 캠페인을 확인했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-title">Merchandising</div>
+        <div class="dashboard-visual"><img src="images/brand-a/05-dashboard-merchandising.png" alt="Merchandising Dashboard"></div>
+        <p class="hero-desc">매출·마진·재고·상품별 성과를 함께 비교해 베스트셀러 재고 부족과 장기재고 등 상품 운영상의 이상징후를 확인했습니다.</p>
+      </div>
+
+      <div class="work-section">
+        <div class="work-section-title">Customer Retention</div>
+        <div class="dashboard-visual"><img src="images/brand-a/06-dashboard-customer-retention.png" alt="Customer Retention Dashboard"></div>
+        <p class="hero-desc">신규·재구매 고객, Cohort Retention, LTV와 고객 특성을 분석해 고객 유입과 유지 흐름의 변화를 확인했습니다.</p>
+      </div>
+    </section>
+
+    <!-- 04. Main Cases -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title"><span class="section-num">04.</span>Main Cases</div>
+      </div>
+      <div class="blog-grid main-cases-grid">
+        <a href="#" class="blog-card" onclick="showView('case-bestseller-reorder'); return false;">
+          <div class="card-thumb">
+            <div class="data-thumb">
+              <div class="data-thumb-kicker">Stock / Safety Stock Ratio</div>
+              <div class="data-bars">
+                <div class="data-bar-item">
+                  <div class="data-bar-item-head">
+                    <span class="data-bar-name">시그니처 로고 후드<span class="data-bar-sku">(HD-001)</span></span>
+                    <span class="data-bar-value">0.13×</span>
+                  </div>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:13%"></span></span>
+                </div>
+                <div class="data-bar-item">
+                  <div class="data-bar-item-head">
+                    <span class="data-bar-name">헤비 플리스 집업 재킷<span class="data-bar-sku">(OT-001)</span></span>
+                    <span class="data-bar-value">0.28×</span>
+                  </div>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:28%"></span></span>
+                </div>
+                <div class="data-bar-item">
+                  <div class="data-bar-item-head">
+                    <span class="data-bar-name">오버사이즈 스웨트셔츠<span class="data-bar-sku">(SW-001)</span></span>
+                    <span class="data-bar-value">0.11×</span>
+                  </div>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:11%"></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="cat-badge">Main Case</span>
+            <div class="card-title">Bestseller Stock → Reorder</div>
+            <div class="card-desc">매출 상위 베스트셀러의 재고 부족을 발견하고, 판매속도를 추가 검증해 리오더 판단과 재고 운영 기준을 설계했습니다.</div>
+          </div>
+          <div class="card-footer">
+            <span>Merchandising · Inventory</span>
+            <span>View Case →</span>
+          </div>
+        </a>
+        <a href="#" class="blog-card" onclick="showView('case-carryover-markdown'); return false;">
+          <div class="card-thumb">
+            <div class="data-thumb">
+              <div class="data-thumb-kicker">Carryover Inventory</div>
+              <div class="data-kpis">
+                <div class="data-kpi">
+                  <div class="data-kpi-value">6 SKUs</div>
+                  <div class="data-kpi-label">Carryover Items</div>
+                </div>
+                <div class="data-kpi">
+                  <div class="data-kpi-value">1,466</div>
+                  <div class="data-kpi-label">Units</div>
+                </div>
+                <div class="data-kpi">
+                  <div class="data-kpi-value">₩43.6M</div>
+                  <div class="data-kpi-label">Inventory Cost</div>
+                </div>
+                <div class="data-kpi">
+                  <div class="data-kpi-value">107–165×</div>
+                  <div class="data-kpi-label">Safety Stock</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="cat-badge">Main Case</span>
+            <div class="card-title">Carryover Inventory → Markdown</div>
+            <div class="card-desc">장기재고 6개 상품의 재고 부담과 할인율별 수익성을 검토해, 단계적 Markdown(가격 인하) 전략과 재고 소진 기준을 설계했습니다.</div>
+          </div>
+          <div class="card-footer">
+            <span>Merchandising · Inventory</span>
+            <span>View Case →</span>
+          </div>
+        </a>
+        <a href="#" class="blog-card" onclick="showView('case-summer-redesign'); return false;">
+          <div class="card-thumb">
+            <div class="data-thumb">
+              <div class="data-thumb-kicker">Campaign Funnel · CMP-005</div>
+              <div class="data-funnel">
+                <div class="data-funnel-step">
+                  <div class="data-funnel-value">0.94%</div>
+                  <div class="data-funnel-label">CTR</div>
+                </div>
+                <span class="data-funnel-arrow">→</span>
+                <div class="data-funnel-step">
+                  <div class="data-funnel-value">1.40%</div>
+                  <div class="data-funnel-label">CVR</div>
+                </div>
+                <span class="data-funnel-arrow">→</span>
+                <div class="data-funnel-step">
+                  <div class="data-funnel-value">₩131K</div>
+                  <div class="data-funnel-label">CPA</div>
+                </div>
+                <span class="data-funnel-arrow">→</span>
+                <div class="data-funnel-step">
+                  <div class="data-funnel-value">0.89x</div>
+                  <div class="data-funnel-label">ROAS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="cat-badge">Main Case</span>
+            <div class="card-title">Summer Season-off → Redesign</div>
+            <div class="card-desc">자사몰의 낮은 마케팅 효율을 캠페인 단위로 분해하고, 여름 시즌오프(CMP-005)의 Funnel(퍼널) 성과와 구매 특성을 추가 검증해 캠페인 재설계 방향을 도출했습니다.</div>
+          </div>
+          <div class="card-footer">
+            <span>Marketing · Campaign</span>
+            <span>View Case →</span>
+          </div>
+        </a>
+        <a href="#" class="blog-card" onclick="showView('case-newcustomer-acquisition'); return false;">
+          <div class="card-thumb">
+            <div class="data-thumb">
+              <div class="data-thumb-kicker">New Customers · Jun 20 → Jul 4 (-80%)</div>
+              <div class="data-compare">
+                <div class="data-compare-col">
+                  <span class="data-compare-value">₩5.81M</span>
+                  <span class="data-compare-bar" style="height:56px"></span>
+                  <span class="data-compare-label">JUN</span>
+                </div>
+                <div class="data-compare-col">
+                  <span class="data-compare-value">₩1.35M</span>
+                  <span class="data-compare-bar" style="height:13px"></span>
+                  <span class="data-compare-label">JUL</span>
+                </div>
+              </div>
+              <div class="data-thumb-footer">
+                <span class="data-compare-delta">Net Sales -76.8%</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="cat-badge">Main Case</span>
+            <div class="card-title">New Customer Decline → Acquisition Test</div>
+            <div class="card-desc">신규고객 감소 현상을 확인하고 가능한 원인을 검토한 뒤, 상품 판매력과 재고 여력을 추가 비교해 신규고객 확보를 위한 Hero 카테고리 테스트 전략을 설계했습니다.</div>
+          </div>
+          <div class="card-footer">
+            <span>Customer · Acquisition</span>
+            <span>View Case →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- 05. Additional Cases -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title"><span class="section-num">05.</span>Additional Cases</div>
+      </div>
+      <div class="works-grid cols-2 additional-cases-grid">
+        <a href="#" class="work-card" onclick="showView('case-hero-price-crosssell'); return false;">
+          <div class="work-thumb">
+            <div class="data-thumb">
+              <div class="data-thumb-kicker">헤비 플리스 집업 재킷(OT-001) · Hero Product</div>
+              <div class="data-kpis">
+                <div class="data-kpi">
+                  <div class="data-kpi-value">≈ ₩13.1M</div>
+                  <div class="data-kpi-label">Net Sales</div>
+                </div>
+                <div class="data-kpi">
+                  <div class="data-kpi-value">42.8%</div>
+                  <div class="data-kpi-label">Product Margin</div>
+                </div>
+              </div>
+              <div class="data-bars">
+                <div class="data-bar-compact">
+                  <span class="data-bar-compact-name">Buyers</span>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:59%"></span></span>
+                  <span class="data-bar-value">29.5%</span>
+                </div>
+                <div class="data-bar-compact">
+                  <span class="data-bar-compact-name">Non-buyers</span>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:43%"></span></span>
+                  <span class="data-bar-value">21.4%</span>
+                </div>
+              </div>
+              <span class="data-tag">시그니처 로고 비니(ACC-001) · Association</span>
+            </div>
+          </div>
+          <div class="work-info">
+            <div class="work-category">Additional Case</div>
+            <div class="work-title">Hero Product → Price Hold / Cross-sell</div>
+          </div>
+        </a>
+        <a href="#" class="work-card" onclick="showView('case-cancel-return-hold'); return false;">
+          <div class="work-thumb">
+            <div class="data-thumb">
+              <div class="data-thumb-kicker">Cancel / Return Rate</div>
+              <div class="data-bars">
+                <div class="data-bar-compact">
+                  <span class="data-bar-compact-name">Cancel</span>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:41%"></span></span>
+                  <span class="data-bar-value">4.10%</span>
+                </div>
+                <div class="data-bar-compact">
+                  <span class="data-bar-compact-name">Return</span>
+                  <span class="data-bar-track"><span class="data-bar-fill" style="width:31%"></span></span>
+                  <span class="data-bar-value">3.07%</span>
+                </div>
+              </div>
+              <div class="data-kpi-solo">
+                <div class="data-kpi-value">7.17%</div>
+                <div class="data-kpi-label">Total Cancel + Return</div>
+              </div>
+              <span class="data-tag">Cause: Unconfirmed</span>
+            </div>
+          </div>
+          <div class="work-info">
+            <div class="work-category">Additional Case</div>
+            <div class="work-title">Cancel / Return → Action Hold</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- 06. Back to Works -->
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('works')">← Back to Works</button>
+    </section>
+
+  </div><!-- /brand-a -->
+
+
+  <!-- ───────── CASE DETAIL VIEWS (Brand A — Notion 콘텐츠 기준, Case별 개별 view) ───────── -->
+
+  <!-- CASE 1: Bestseller Stock → Reorder -->
+  <div class="view case-detail-view" id="view-case-bestseller-reorder">
+    <section class="page-header">
+      <div class="hero-eyebrow">// MAIN CASE</div>
+      <h1 class="page-title">Bestseller Stock → Reorder</h1>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">01.</span>Observation</div></div>
+      <p class="hero-desc">베스트셀러 3개 상품이 전체 Net Sales(순매출)의 약 74%를 차지하고 있는 반면, 현재 재고는 Safety Stock(안전재고) 대비 매우 낮은 수준으로 확인되었습니다.</p>
+      <ul class="career-summary-list">
+        <li>시그니처 로고 후드(HD-001): 현재재고 5 / Safety Stock 38 → 0.13x</li>
+        <li>헤비 플리스 집업 재킷(OT-001): 현재재고 5 / Safety Stock 18 → 0.28x</li>
+        <li>오버사이즈 스웨트셔츠(SW-001): 현재재고 4 / Safety Stock 37 → 0.11x</li>
+      </ul>
+      <p class="hero-desc">매출 기여도가 높은 핵심 상품의 재고 부족이 지속될 경우 품절에 따른 판매 기회 손실로 이어질 가능성이 있다고 판단했습니다.</p>
+      <div class="dashboard-visual"><img src="images/brand-a/case1-observation.png" alt="Bestseller Stock → Reorder Observation"></div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">02.</span>Hypothesis</div></div>
+      <p class="hero-desc">재고 부족 현상의 원인을 확인하기 위해 세 가지 가능성을 설정했습니다.</p>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>H1 · Demand Spike</strong><br>최근 예상보다 빠른 판매 증가로 재고가 급격히 소진되었을 가능성</p>
+        <p class="hero-desc"><strong>H2 · Late Reorder</strong><br>판매 흐름 대비 리오더 의사결정이 늦었을 가능성</p>
+        <p class="hero-desc"><strong>H3 · Inbound Delay</strong><br>발주 이후 생산 또는 입고 일정이 지연되었을 가능성</p>
+      </div>
+      <p class="hero-desc">이 단계에서는 재고 부족이라는 현상만으로 특정 원인을 단정하지 않고 추가 데이터를 통해 가설을 검증했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">03.</span>Analysis / Validation</div></div>
+      <p class="hero-desc">먼저 H1 · 최근 수요 급증 가능성을 확인하기 위해 베스트셀러 3개 상품의 최근 판매속도와 이전 기간의 판매속도를 비교했습니다.</p>
+      <table class="case-table">
+        <thead><tr><th>상품</th><th>최근 판매속도</th><th>이전 기준</th><th>변화</th></tr></thead>
+        <tbody>
+          <tr><td>시그니처 로고 후드(HD-001)</td><td>7.50개/주</td><td>10.67개/주</td><td>0.70x</td></tr>
+          <tr><td>헤비 플리스 집업 재킷(OT-001)</td><td>3.25개/주</td><td>5.04개/주</td><td>0.64x</td></tr>
+          <tr><td>오버사이즈 스웨트셔츠(SW-001)</td><td>9.50개/주</td><td>10.08개/주</td><td>0.94x</td></tr>
+        </tbody>
+      </table>
+      <p class="hero-desc">세 상품 모두 최근 판매속도가 이전 기준을 초과하지 않았습니다. 따라서 최근 갑작스러운 수요 급증이 재고 부족의 주된 원인이라는 H1은 약화되었습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">04.</span>Counterpoint / Data Limitation</div></div>
+      <p class="hero-desc">현재 재고 수준과 판매속도는 확인할 수 있지만, 발주일·발주수량·입고예정일·실입고일 등 발주/입고 이력이 없어 재고 부족이 늦은 리오더 판단 때문인지 생산·입고 지연 때문인지 구분할 수 없습니다. 따라서 H2와 H3 중 어느 하나를 실제 원인으로 단정하지 않았습니다.</p>
+      <p class="hero-desc"><strong>Additional Data Needed</strong><br>PO Date(발주일) · Order Qty(발주수량) · Production Lead Time(생산 소요기간) · ETA(입고예정일) · Actual Receipt Date(실입고일) · Actual Receipt Qty(실입고수량) · Historical Inventory(과거 재고)</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">05.</span>Final Judgment</div></div>
+      <p class="hero-desc">베스트셀러 3개 상품의 절대적인 재고 부족은 명확하지만, 판매속도 추가 분석에서는 최근 갑작스러운 수요 급증이 확인되지 않았습니다. 따라서 단순한 수요 급증보다 리오더 및 입고 프로세스를 추가 점검해야 하는 재고 운영 이슈로 판단했습니다.</p>
+      <p class="hero-desc">다만 발주·입고 이력이 없어 리오더 판단 지연과 생산·입고 지연 중 어느 요인이 실제 원인인지는 현재 데이터만으로 특정하지 않았습니다.</p>
+      <div class="judgment-flow">
+        <span class="judgment-flow-step">재고 부족 확인</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">수요 급증 가설 검증</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">가설 약화</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">운영 프로세스 점검 필요</span>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">06.</span>MD Action</div></div>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>01 · Reorder Review</strong><br>현재 판매속도와 향후 판매기간, Lead Time(생산·입고 소요기간)을 기준으로 베스트셀러 3개 상품의 리오더 수량을 검토합니다.</p>
+        <p class="hero-desc"><strong>02 · Stockout Response</strong><br>예상 입고 전 Stockout(품절) 가능성이 높은 경우 관련·유사 상품으로 고객 수요를 연결해 판매 기회 손실을 최소화합니다.</p>
+        <p class="hero-desc"><strong>03 · Reorder Trigger Management</strong><br>향후 PO Date · Order Qty · ETA · Actual Receipt 데이터를 관리하고, Safety Stock 도달 전에 리오더 검토가 시작될 수 있도록 운영 기준을 설정합니다.</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">07.</span>Validation Plan</div></div>
+      <p class="hero-desc">리오더 실행 이후에는 단순히 상품이 정상 입고되었는지만 확인하지 않고, 입고 실행과 리오더 의사결정의 성과를 구분해 검증합니다.</p>
+      <div class="kpi-card-grid">
+        <p class="hero-desc"><strong>Execution KPI · 입고 실행</strong><br>계획 입고일 vs 실제 입고일<br>계획 수량 vs 실제 입고수량</p>
+        <p class="hero-desc"><strong>Inventory KPI · 재고 건전성</strong><br>Stockout(품절) 발생 여부 및 기간<br>WOS(재고 소진 가능 주수)<br>판매속도 대비 재고 수준</p>
+        <p class="hero-desc"><strong>Result KPI · 판매 결과</strong><br>Sell-through(판매율)<br>판매 기회 손실 감소 여부<br>잔여재고 수준</p>
+      </div>
+      <p class="hero-desc">품절이 발생하지 않았다는 이유만으로 리오더가 성공했다고 판단하지 않고, Sell-through와 잔여재고를 함께 확인해 과잉발주 가능성까지 검증합니다.</p>
+    </section>
+
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('brand-a')">← Back to Brand A</button>
+    </section>
+  </div><!-- /case-bestseller-reorder -->
+
+  <!-- CASE 2: Carryover Inventory → Markdown -->
+  <div class="view case-detail-view" id="view-case-carryover-markdown">
+    <section class="page-header">
+      <div class="hero-eyebrow">// MAIN CASE</div>
+      <h1 class="page-title">Carryover Inventory → Markdown</h1>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">01.</span>Observation</div></div>
+      <p class="hero-desc">6개 이월·단종 상품에서 Safety Stock(안전재고) 대비 100배 이상의 과도한 재고가 확인되었습니다.<br>해당 상품들의 현재 재고는 총 1,466개, 재고원가 기준 약 4,361만 원으로 확인되어, 재고 수량뿐 아니라 자금 운용 측면에서도 부담이 큰 상태로 판단했습니다.</p>
+      <table class="case-table">
+        <thead><tr><th>상품</th><th>현재재고</th><th>재고원가</th><th>Safety Stock 대비</th></tr></thead>
+        <tbody>
+          <tr><td>이월 후드(단종컬러)(HD-003)</td><td>274</td><td>8,357,000원</td><td>137x</td></tr>
+          <tr><td>이월 바람막이 자켓(OT-003)</td><td>214</td><td>10,935,400원</td><td>107x</td></tr>
+          <tr><td>이월 트레이닝 팬츠(PT-002)</td><td>284</td><td>8,605,200원</td><td>142x</td></tr>
+          <tr><td>이월 조거 팬츠(PT-003)</td><td>221</td><td>5,657,600원</td><td>110.5x</td></tr>
+          <tr><td>이월 스웨트셔츠(구컬러)(SW-003)</td><td>217</td><td>6,184,500원</td><td>108.5x</td></tr>
+          <tr><td>이월 볼캡(CAP-001)</td><td>256</td><td>3,865,600원</td><td>128x</td></tr>
+        </tbody>
+      </table>
+      <p class="hero-desc">장기간 정상 판매만으로 재고를 소진하기 어려운 수준으로 판단해 Markdown(가격 인하)을 통한 재고 회전 개선 필요성을 검토했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">02.</span>Hypothesis</div></div>
+      <p class="hero-desc">장기재고를 정상 판매보다 적극적인 Markdown으로 운영할 경우 재고 소진을 개선할 수 있다고 보고 다음 가능성을 검토했습니다.</p>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>H1 · Initial Markdown</strong><br>약 50% 수준의 초기 할인을 적용하면 장기재고의 판매 진입장벽을 낮추면서 일정 수준의 상품마진을 유지할 수 있을 가능성</p>
+        <p class="hero-desc"><strong>H2 · Deeper Markdown</strong><br>초기 할인 이후에도 판매 반응이 낮다면 최대 60% 수준까지 추가 할인해 재고 소진을 가속할 수 있을 가능성</p>
+        <p class="hero-desc"><strong>H3 · Margin Constraint</strong><br>상품별 원가구조가 다르기 때문에 동일한 할인율을 일괄 적용할 경우 일부 상품은 상품원가 이하로 판매될 가능성</p>
+      </div>
+      <p class="hero-desc">H3를 확인하기 위해 상품별 원가와 할인 적용 후 판매가격을 비교했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">03.</span>Analysis / Validation</div></div>
+      <p class="hero-desc">먼저 약 50% 할인 적용 시 상품별 판매가격과 Cost Price(상품원가)를 비교했습니다. 검토 결과 6개 상품 중 5개는 50% 할인에서도 상품원가 기준 양(+)의 마진을 유지했지만, 이월 바람막이 자켓(OT-003)은 예외였습니다.</p>
+      <table class="case-table">
+        <thead><tr><th>할인율</th><th>판매가</th><th>상품원가</th><th>개당 마진</th><th>상품마진율</th></tr></thead>
+        <tbody>
+          <tr><td>45%</td><td>₩54,450</td><td>₩51,100</td><td>+₩3,350</td><td>+6.2%</td></tr>
+          <tr><td>50%</td><td>₩49,500</td><td>₩51,100</td><td>-₩1,600</td><td>-3.2%</td></tr>
+        </tbody>
+      </table>
+      <p class="hero-desc">따라서 모든 장기재고에 동일하게 50% 할인을 적용하기보다 상품별 원가구조를 고려해 초기 할인율을 다르게 설정할 필요가 있다고 판단했습니다.</p>
+      <p class="hero-desc">추가로 60% 할인까지 검토한 결과, 6개 상품 중 5개가 상품원가 이하로 내려가고 이월 볼캡(CAP-001)만 소폭 양(+)의 상품마진을 유지했습니다. 이에 따라 처음 고려했던 '최대 60% 할인'이라는 고정 상한 기준을 폐기하고, 상품별 원가구조와 판매 반응에 따라 추가 할인 여부를 판단하는 방향으로 수정했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">04.</span>Counterpoint / Data Limitation</div></div>
+      <p class="hero-desc">현재 데이터에서는 Cost Price(상품원가)는 확인할 수 있지만, 장기재고 유지에 따른 보관비·물류비·플랫폼 수수료·쿠폰 분담비 등 추가 비용은 포함되어 있지 않습니다. 따라서 상품원가 이하의 판매가 발생한다는 이유만으로 추가 할인보다 재고를 계속 보유하는 것이 경제적으로 더 유리하다고 단정할 수 없습니다. 장기재고에서는 상품마진뿐 아니라 재고 유지비용과 Cash Conversion(현금 회수) 가능성을 함께 비교할 필요가 있습니다.</p>
+      <p class="hero-desc"><strong>Additional Data Needed</strong><br>Inventory Age(재고연령) · Holding / Storage Cost(보관비) · Logistics / Shipping Cost(물류·배송비) · Platform Commission(플랫폼 수수료) · Coupon Share(쿠폰 분담비)</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">05.</span>Final Judgment</div></div>
+      <p class="hero-desc">6개 이월·단종 상품은 정상 판매만으로 해소하기 어려운 수준의 재고 부담을 가지고 있어 적극적인 Markdown 운영이 필요한 상품군으로 판단했습니다. 초기 할인은 약 45~50% 수준이 합리적이며, 상품원가가 상대적으로 높은 이월 바람막이 자켓(OT-003)은 약 45%부터 시작해 상품마진을 일부 방어하는 것이 적절하다고 판단했습니다.</p>
+      <p class="hero-desc">다만 장기재고에 대해 '최대 60%'와 같은 고정 할인 상한을 사전에 설정하는 것은 적절하지 않다고 판단을 수정했습니다. 판매 반응과 재고연령이 악화될수록 상품마진 방어뿐 아니라 Cash Recovery(현금 회수)와 재고 보유 부담까지 함께 고려해 추가 할인 여부를 결정해야 합니다.</p>
+      <div class="judgment-flow">
+        <span class="judgment-flow-step">장기재고 발견</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">45~50% 초기 할인 검토</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">원가 검증</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">고정 60% 기준 수정</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">단계적 Markdown 전략</span>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">06.</span>MD Action</div></div>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>01 · Initial Markdown</strong><br>장기재고 6개 상품을 우선 Clearance(재고정리) 대상으로 분류하고 약 45~50% 수준의 초기 할인을 적용합니다. 이월 바람막이 자켓(OT-003)은 상품원가 구조를 고려해 약 45%부터 시작합니다.</p>
+        <p class="hero-desc"><strong>02 · Response-based Markdown</strong><br>초기 할인 이후 상품별 Sales Velocity(판매속도)와 Sell-through(판매율)를 모니터링합니다. 판매 반응이 낮은 상품은 바로 추가 할인하지 않고 프로모션 노출과 상품 클릭 수준을 먼저 확인합니다. 노출이 부족하다면 상품 진열·프로모션을 개선하고, 충분히 노출되었음에도 판매 반응이 낮은 경우 추가 Markdown을 검토합니다.</p>
+        <p class="hero-desc"><strong>03 · Long-term Clearance</strong><br>재고연령이 길어지고 판매 반응이 지속적으로 낮은 상품은 고정 할인 상한보다 상품원가 · 재고 유지비용 · 예상 현금 회수액을 기준으로 더 깊은 Clearance 여부를 판단합니다.</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">07.</span>Validation Plan</div></div>
+      <p class="hero-desc">Markdown 실행 이후에는 단순 판매량 증가만 보는 것이 아니라 판매 반응 → 재고 소진 → 수익성을 함께 검증합니다.</p>
+      <div class="kpi-card-grid">
+        <p class="hero-desc"><strong>Process KPI · 판매 반응</strong><br>Promotion Exposure(프로모션 노출)<br>Product Click(상품 클릭)<br>Sales Velocity(판매속도)</p>
+        <p class="hero-desc"><strong>Inventory KPI · 재고 소진</strong><br>Sell-through(판매율)<br>Remaining Qty(잔여수량)<br>Remaining Inventory Cost(잔여 재고원가)</p>
+        <p class="hero-desc"><strong>Result KPI · 수익성</strong><br>Product Margin(상품마진)<br>Margin Amount(마진액)<br>Cash Recovery(현금 회수액)</p>
+      </div>
+      <p class="hero-desc"><strong>노출 부족 → 진열·프로모션 개선<br>충분한 노출 + 낮은 판매 반응 → 추가 Markdown 검토</strong></p>
+    </section>
+
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('brand-a')">← Back to Brand A</button>
+    </section>
+  </div><!-- /case-carryover-markdown -->
+
+  <!-- CASE 3: Summer Season-off → Redesign -->
+  <div class="view case-detail-view" id="view-case-summer-redesign">
+    <section class="page-header">
+      <div class="hero-eyebrow">// MAIN CASE</div>
+      <h1 class="page-title">Summer Season-off → Redesign</h1>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">01.</span>Observation</div></div>
+      <p class="hero-desc">채널별 마케팅 성과를 비교한 결과, 자사몰은 가장 많은 광고비를 집행했지만 다른 주요 채널 대비 낮은 ROAS(광고비 대비 매출)를 기록했습니다. 이에 처음에는 자사몰 광고비를 축소하고 효율이 높은 채널로 예산을 재배분하는 방안을 고려했습니다.</p>
+      <p class="hero-desc">하지만 채널 전체의 성과만으로 예산을 조정하기보다, 어떤 캠페인이 자사몰의 낮은 효율을 만들고 있는지 추가 확인할 필요가 있다고 판단했습니다. 캠페인별 성과를 분해한 결과 여름 시즌오프(CMP-005)에서 다음과 같은 비효율이 확인되었습니다.</p>
+      <div class="kpi-strip kpi-strip-5">
+        <div class="kpi-strip-item"><span class="kpi-strip-label">Ad Spend</span><span class="kpi-strip-value">2,627,167원</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">ROAS</span><span class="kpi-strip-value">0.89x</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">CPA</span><span class="kpi-strip-value">약 131,358원</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">CTR</span><span class="kpi-strip-value">0.94%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">CVR</span><span class="kpi-strip-value">1.40%</span></div>
+      </div>
+      <p class="hero-desc">따라서 자사몰 전체보다 여름 시즌오프(CMP-005)를 우선적으로 점검해야 할 캠페인으로 판단했습니다.</p>
+      <div class="dashboard-visual"><img src="images/brand-a/case3-observation.png" alt="Summer Season-off → Redesign Observation"></div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">02.</span>Hypothesis</div></div>
+      <p class="hero-desc">여름 시즌오프(CMP-005)의 낮은 ROAS 원인을 확인하기 위해 다음 가능성을 검토했습니다.</p>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>H1 · Excessive Discount</strong><br>과도한 할인으로 인해 매출 대비 수익성이 악화되었을 가능성</p>
+        <p class="hero-desc"><strong>H2 · Low Order Value</strong><br>낮은 AOV(평균 주문금액)로 인해 광고비 대비 충분한 매출을 만들지 못했을 가능성</p>
+        <p class="hero-desc"><strong>H3 · Funnel Inefficiency</strong><br>광고 클릭부터 구매까지 Funnel 전반의 효율이 낮아 충분한 전환을 만들지 못했을 가능성</p>
+      </div>
+      <p class="hero-desc">추가로 캠페인 구매 고객의 신규·기존 고객 구성과 구매 특성을 확인해 캠페인이 실제로 어떤 고객에게 반응했는지 함께 검토했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">03.</span>Analysis / Validation</div></div>
+      <p class="hero-desc">먼저 할인과 주문금액이 낮은 ROAS의 주요 원인인지 확인했습니다. 여름 시즌오프(CMP-005)의 AOV(평균 주문금액)는 117,080원으로 전체 평균 약 107,056원보다 높았으며, 평균 할인율은 2.8%로 전체 평균 4.5%보다 낮았습니다. 따라서 과도한 할인(H1)과 낮은 주문금액(H2)이 캠페인 비효율의 주된 원인이라는 가설은 약화되었습니다.</p>
+      <p class="hero-desc">캠페인의 Funnel 성과를 추가 확인한 결과는 다음과 같습니다.</p>
+      <div class="kpi-strip kpi-strip-4 kpi-strip-emphasis">
+        <div class="kpi-strip-item"><span class="kpi-strip-label">CTR</span><span class="kpi-strip-value">0.94%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">CVR</span><span class="kpi-strip-value">1.40%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">CPA</span><span class="kpi-strip-value">약 ₩131K</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">ROAS</span><span class="kpi-strip-value">0.89x</span></div>
+      </div>
+      <p class="hero-desc">광고 클릭 단계와 구매전환 단계가 모두 낮아 특정 한 단계보다 Funnel 전반에서 성과가 약화된 상태로 판단했습니다.</p>
+      <p class="hero-desc">구매 고객 구성도 확인했습니다.</p>
+      <div class="kpi-strip kpi-strip-4">
+        <div class="kpi-strip-item"><span class="kpi-strip-label">Unique Customers</span><span class="kpi-strip-value">19명</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">Existing Customers</span><span class="kpi-strip-value">18명 · 94.7%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">New Customers</span><span class="kpi-strip-value">1명 · 5.3%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">기존고객 평균 과거 구매횟수</span><span class="kpi-strip-value">4.3회</span></div>
+      </div>
+      <p class="hero-desc">캠페인 구매의 대부분이 기존고객에게서 발생했으며, 신규고객 확보 효과는 제한적으로 나타났습니다. 다만 이 결과만으로 캠페인이 기존고객의 추가 구매를 실제로 유발했다는 Incrementality(증분효과)까지 확인할 수는 없습니다.</p>
+      <div class="dashboard-visual"><img src="images/brand-a/case3-analysis.png" alt="Summer Season-off → Redesign Analysis"></div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">04.</span>Counterpoint / Data Limitation</div></div>
+      <p class="hero-desc">CTR과 CVR이 모두 낮다는 사실은 확인할 수 있지만, 현재 데이터만으로 광고 Creative(소재), 상품 구성, 프로모션 혜택, PDP(상품상세페이지) 등 어느 요소가 Funnel 저하의 직접적인 원인인지는 특정할 수 없습니다. 특히 캠페인 주문 데이터에서는 실제로 구매된 상품만 확인할 수 있고 캠페인에 노출된 전체 상품 구성을 확인할 수 없어, 판매된 상품만을 기준으로 상품 구성이 문제였다고 판단하면 Survivorship Bias(생존자 편향)가 발생할 수 있습니다. 또한 기존고객 구매 비중이 높지만 캠페인이 없었더라도 구매했을 고객인지 구분할 수 없어 Incrementality(증분효과)를 확인할 수 없습니다.</p>
+      <p class="hero-desc"><strong>Additional Data Needed</strong><br>Campaign Exposed SKU List(캠페인 노출 상품 목록) · SKU Exposure(상품 노출) · Product Click(상품 클릭) · Creative별 CTR · PDP View(상세페이지 조회) · Cart(장바구니) · Customer Targeting(고객 타겟팅)</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">05.</span>Final Judgment</div></div>
+      <p class="hero-desc">자사몰의 낮은 마케팅 효율을 캠페인 단위로 분해한 결과, 여름 시즌오프(CMP-005)가 우선적으로 개선이 필요한 저효율 캠페인으로 확인되었습니다. 낮은 AOV나 과도한 할인은 주요 원인으로 지지되지 않았으며, CTR과 CVR이 동시에 낮아 Funnel 전반의 개선이 필요한 캠페인으로 판단했습니다.</p>
+      <p class="hero-desc">다만 현재 데이터로 상품 구성이나 광고 소재 등 특정 원인을 확정할 수 없기 때문에, 기존 캠페인을 그대로 반복하거나 자사몰 전체 예산을 즉시 축소하기보다 캠페인의 목적·타깃·상품 구성·혜택을 재설계한 뒤 소규모로 다시 검증하는 방향이 적절하다고 판단했습니다.</p>
+      <div class="judgment-flow">
+        <span class="judgment-flow-step">자사몰 저효율 발견</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">캠페인 분해</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">여름 시즌오프(CMP-005) 특정</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">할인·AOV 가설 약화</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">Funnel 전반 저하 확인</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">캠페인 재설계</span>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">06.</span>MD Action</div></div>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>01 · Campaign Objective &amp; Target</strong><br>여름 시즌오프(CMP-005)의 목적을 기존고객 활성화 또는 신규고객 획득 중 하나로 명확히 설정하고, 목적에 맞춰 고객 타깃과 KPI를 재설정합니다.</p>
+        <p class="hero-desc"><strong>02 · Assortment &amp; Benefit Redesign</strong><br>캠페인 상품 구성과 프로모션 혜택을 재검토하고, 기존 캠페인과 다른 Assortment(상품 구성) · Benefit(혜택) 조합을 소규모로 테스트합니다. 현재 데이터만으로 상품 구성이 원인이라고 단정하지 않고 검증 대상으로 설정합니다.</p>
+        <p class="hero-desc"><strong>03 · Small-scale Relaunch</strong><br>자사몰 전체 광고비를 즉시 축소하지 않고, 재설계한 캠페인을 소규모 예산으로 재집행합니다. CTR → CVR → CPA → ROAS의 개선 여부를 확인한 뒤 성과가 확인될 경우에만 예산 확대를 검토합니다.</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">07.</span>Validation Plan</div></div>
+      <p class="hero-desc">재설계한 캠페인은 기존 여름 시즌오프(CMP-005)를 Baseline(비교 기준)으로 두고 Funnel 단계별 개선 여부를 검증합니다.</p>
+      <div class="kpi-card-grid">
+        <p class="hero-desc"><strong>Process KPI · 광고 반응</strong><br>CTR(광고 클릭률) ↑</p>
+        <p class="hero-desc"><strong>Conversion KPI · 구매전환</strong><br>CVR(구매전환율) ↑<br>CPA(구매 1건당 비용) ↓</p>
+        <p class="hero-desc"><strong>Result KPI · 캠페인 효율</strong><br>ROAS(광고비 대비 매출) ↑</p>
+      </div>
+      <p class="hero-desc">캠페인 목적이 신규고객 획득이라면 신규 구매고객 수와 신규고객 매출, 기존고객 활성화라면 대상 고객의 구매전환과 매출을 목적별 Result KPI로 추가 확인합니다. 재설계 캠페인을 소규모로 검증하고, CTR · CVR · CPA의 개선과 최종 ROAS를 종합적으로 확인한 뒤 성과가 유의미하게 개선될 경우 예산 확대를 검토합니다.</p>
+    </section>
+
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('brand-a')">← Back to Brand A</button>
+    </section>
+  </div><!-- /case-summer-redesign -->
+
+  <!-- CASE 4: New Customer Decline → Acquisition Test -->
+  <div class="view case-detail-view" id="view-case-newcustomer-acquisition">
+    <section class="page-header">
+      <div class="hero-eyebrow">// MAIN CASE</div>
+      <h1 class="page-title">New Customer Decline → Acquisition Test</h1>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">01.</span>Observation</div></div>
+      <p class="hero-desc">최초 정상구매를 기준으로 월별 신규고객 흐름을 확인한 결과, 6월 20명에서 7월 4명으로 약 80% 감소했습니다. 같은 기간 신규고객 Net Sales(순매출) 역시 5,813,700원에서 1,348,400원으로 약 76.8% 감소해 신규고객 유입과 매출이 동시에 약화된 현상을 확인했습니다.</p>
+      <p class="hero-desc">월별 신규고객 수는 다음과 같습니다.</p>
+      <div class="kpi-strip kpi-strip-4">
+        <div class="kpi-strip-item"><span class="kpi-strip-label">5월</span><span class="kpi-strip-value">74명</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">6월</span><span class="kpi-strip-value">20명</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">7월</span><span class="kpi-strip-value">4명</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">8월</span><span class="kpi-strip-value">2명<span class="kpi-strip-asterisk">*</span></span></div>
+      </div>
+      <p class="hero-desc">다만 5월은 데이터 관측 시작 시점의 영향이 포함될 수 있고, 8월은 8월 18일까지의 부분 데이터이므로 월 전체를 직접 비교하기에는 한계가 있습니다. 따라서 가장 비교 가능한 6월 → 7월 감소를 주요 분석 대상으로 설정했습니다.</p>
+      <div class="dashboard-visual"><img src="images/brand-a/case4-observation.png" alt="New Customer Decline → Acquisition Test Observation"></div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">02.</span>Hypothesis</div></div>
+      <p class="hero-desc">6월에서 7월 사이 신규고객이 크게 감소한 원인을 확인하기 위해 다음 가능성을 검토했습니다.</p>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>H1 · Acquisition Marketing</strong><br>신규고객을 유입시키는 마케팅 활동이 충분하지 않았거나 약화되었을 가능성</p>
+        <p class="hero-desc"><strong>H2 · Bestseller Stock Constraint</strong><br>신규고객의 구매 진입점 역할을 할 수 있는 베스트셀러의 재고 부족이 신규 구매를 제한했을 가능성</p>
+        <p class="hero-desc"><strong>H3 · Own-mall Funnel Friction</strong><br>자사몰 방문 이후 상품 탐색·장바구니·구매 과정에서 이탈이 발생했을 가능성</p>
+      </div>
+      <p class="hero-desc">각 가설을 현재 확보된 데이터로 어디까지 검증할 수 있는지 확인했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">03.</span>Analysis / Validation</div></div>
+      <p class="hero-desc">먼저 신규고객 감소가 마케팅 활동 부족만으로 설명될 수 있는지 검토했습니다. 신규고객 확보를 직접적으로 설명할 수 있는 유입 Source(출처)와 UTM 데이터가 없어 실제 신규고객이 광고·SNS·검색·Direct 중 어떤 경로로 유입되었는지는 확인할 수 없었습니다. 따라서 Acquisition Marketing 부족 가능성을 배제할 수는 없지만, 마케팅 활동의 부재가 신규고객 감소의 주요 원인이었다고 판단하기에는 근거가 부족했습니다.</p>
+      <p class="hero-desc">베스트셀러 재고 부족 가능성도 검토했습니다. 현재 데이터에서는 시그니처 로고 후드(HD-001), 헤비 플리스 집업 재킷(OT-001), 오버사이즈 스웨트셔츠(SW-001)의 낮은 재고가 확인되었지만, 이는 현재 시점의 재고 Snapshot(스냅샷)입니다. 7월 당시의 Historical Inventory(과거 재고) 데이터가 없어 7월 신규고객 감소 시점에도 실제 품절 또는 재고 부족이 발생했는지는 확인할 수 없었습니다.</p>
+      <p class="hero-desc">또한 자사몰의 PDP View(상세페이지 조회), Cart(장바구니), Checkout(결제 진입), Purchase(구매) 등 행동 데이터가 없어 구매 Funnel에서 어느 단계의 이탈이 신규고객 감소에 영향을 주었는지도 특정할 수 없었습니다. 따라서 세 가설 모두 신규고객 감소의 확정 원인으로 판단하기에는 근거가 충분하지 않았습니다.</p>
+      <p class="hero-desc">그렇다면 원인을 임의로 확정하기보다, 현재 데이터에서 실행 가능한 신규고객 확보 전략을 설계하고 검증하는 방향으로 분석을 전환했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">04.</span>Counterpoint / Data Limitation</div></div>
+      <p class="hero-desc">현재 데이터에서는 신규고객 감소라는 결과는 확인할 수 있지만, 실제 고객 유입 경로와 구매 행동 경로가 연결되어 있지 않아 감소의 직접적인 원인을 특정할 수 없습니다. 또한 현재의 낮은 베스트셀러 재고가 7월 당시에도 동일한 상태였다고 볼 수 없기 때문에, 현재 재고 수준을 과거 신규고객 감소의 원인으로 해석하지 않았습니다. 따라서 이번 Case에서는 특정 원인을 단정하기보다 추가 데이터로 원인을 추적하는 동시에, 현재 확인 가능한 상품 데이터를 활용해 신규고객 확보 전략을 테스트하는 방향을 선택했습니다.</p>
+      <p class="hero-desc"><strong>Additional Data Needed</strong><br>UTM / Acquisition Source(유입경로) · Ad / SNS / Search / Direct Traffic · Historical Inventory(과거 재고) · PDP View(상세페이지 조회) · Related Product Click(연관상품 클릭) · Cart(장바구니) · Purchase(구매) · Exit(이탈)</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">05.</span>Final Judgment</div></div>
+      <p class="hero-desc">6월에서 7월 사이 신규고객과 신규고객 매출이 크게 감소한 현상은 명확하지만, 현재 데이터만으로 마케팅 부족·베스트셀러 재고 부족·자사몰 Funnel 문제 중 특정 원인을 확정할 수 없었습니다. 따라서 확인되지 않은 원인을 전제로 Action을 설계하기보다, 현재 확인 가능한 상품 판매·재고 데이터를 기반으로 신규고객의 구매 진입점을 설계하고 검증하는 Acquisition Test(신규고객 확보 테스트)를 우선 실행하기로 판단했습니다.</p>
+      <p class="hero-desc">Hero 카테고리를 결정하기 위해 후드와 스웨트셔츠를 추가 비교했습니다. 두 카테고리 모두 베스트셀러 재고 부족이라는 동일한 문제가 있고 판매력과 신규고객 첫 구매 성과에서도 압도적인 차이는 확인되지 않았습니다.</p>
+      <p class="hero-desc">이에 베스트셀러뿐 아니라 차순위 정상판매 SKU까지 비교했습니다. 후드는 그래픽 프린트 후드(HD-002)가 스웨트셔츠의 크루넥 스웨트셔츠(SW-002)보다 판매 실적과 현재 재고 여력이 상대적으로 높았고, 가장 표본이 큰 5월 신규고객 첫 구매에서도 후드가 근소하게 높은 비중을 보였습니다. 이에 따라 신규고객 프로모션의 Hero 카테고리로 후드를 우선 테스트하기로 판단했습니다.</p>
+      <div class="judgment-flow">
+        <span class="judgment-flow-step">신규고객 감소 발견</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">원인 가설 검토</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">근거 부족으로 원인 확정 보류</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">상품 데이터 추가 비교</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">후드를 Hero 카테고리로 우선 테스트</span>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">06.</span>MD Action</div></div>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>01 · Hoodie Hero Test</strong><br>신규고객 확보를 위한 Hero 카테고리로 후드를 우선 테스트합니다. 판매력이 검증된 시그니처 로고 후드(HD-001)는 재입고 일정과 물량 확보 여부를 확인한 후 예약발송 방식으로 Hero 역할을 유지합니다.</p>
+        <p class="hero-desc"><strong>02 · Alternative Product Connection</strong><br>재고 여력이 충분한 그래픽 프린트 후드(HD-002)를 연관상품으로 연결해 즉시 구매 가능한 대체 선택지를 제공합니다.</p>
+        <p class="hero-desc"><strong>03 · PDP &amp; Styling</strong><br>두 상품의 Lookbook(룩북)·Styling(스타일링) 콘텐츠를 PDP에 강화하고, 상품 간 탐색과 구매전환 효과를 검증합니다.</p>
+      </div>
+      <p class="hero-desc">이번 Action에서 후드는 신규고객 확보에 가장 효과적인 카테고리라고 확정한 것이 아니라, 현재 데이터상 우선 검증할 가치가 있는 Hero 카테고리로 선택한 것입니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">07.</span>Validation Plan</div></div>
+      <p class="hero-desc">Hero 카테고리 테스트 이후에는 신규고객 확보라는 목적에 맞춰 결과 KPI와 구매 과정 KPI를 구분해 검증합니다.</p>
+      <div class="kpi-card-grid">
+        <p class="hero-desc"><strong>Result KPI · 신규고객 확보</strong><br>New Purchasing Customers(신규 구매고객 수)<br>New Customer Purchase Conversion(신규고객 구매전환율)<br>New Customer Net Sales(신규고객 순매출)</p>
+        <p class="hero-desc"><strong>Process KPI · 상품 탐색 및 전환</strong><br>Ad CTR(광고 클릭률)<br>PDP View(상세페이지 조회)<br>Related Product CTR(연관상품 클릭률)<br>Cart / Purchase Conversion(장바구니·구매전환)<br>Exit Rate(이탈률)</p>
+        <p class="hero-desc"><strong>Operational KPI · 재고 운영</strong><br>Confirmed Inbound Date / Qty(확정 입고일·수량)<br>Stockout(품절) 발생 여부<br>Post-promotion Inventory(프로모션 후 재고)<br>Product Margin(상품마진)</p>
+      </div>
+      <p class="hero-desc">신규고객 수와 매출이 개선되었는지만 확인하지 않고, 유입 → 상품 탐색 → 구매 → 재고까지 연결해 Hero 전략 적용 이후 신규고객 확보 성과가 어떻게 변화했는지 검증합니다.</p>
+    </section>
+
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('brand-a')">← Back to Brand A</button>
+    </section>
+  </div><!-- /case-newcustomer-acquisition -->
+
+  <!-- ADDITIONAL CASE 1: Hero Product → Price Hold / Cross-sell -->
+  <div class="view case-detail-view" id="view-case-hero-price-crosssell">
+    <section class="page-header">
+      <div class="hero-eyebrow">// ADDITIONAL CASE</div>
+      <h1 class="page-title">Hero Product → Price Hold / Cross-sell</h1>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">01.</span>Observation</div></div>
+      <p class="hero-desc">헤비 플리스 집업 재킷(OT-001)은 72건의 정상 판매와 약 1,310만 원의 매출을 기록해 전체 상품 중 매출 1위를 기록했습니다. 반면 Product Margin Rate(상품마진율)는 약 42.8%로 Outerwear(아우터) 카테고리 평균 약 43.1%보다 소폭 낮게 나타났습니다. 초기에는 높은 판매량과 상대적으로 낮은 마진율을 근거로 원가 협상 또는 판매가격 인상 필요성을 검토했습니다.</p>
+      <div class="dashboard-visual"><img src="images/brand-a/case-additional1-observation.png" alt="Hero Product → Price Hold / Cross-sell Observation"></div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">02.</span>Hypothesis</div></div>
+      <p class="hero-desc">매출 1위 상품의 수익성을 개선하기 위해 다음 가능성을 검토했습니다.</p>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>H1 · Price Increase</strong><br>현재 판매력을 기반으로 가격을 인상해 상품 수익성을 개선할 수 있을 가능성</p>
+        <p class="hero-desc"><strong>H2 · Price Hold</strong><br>카테고리 평균과의 마진율 차이가 크지 않아 가격을 유지하는 것이 판매력과 마진 기여를 보존하는 데 더 적절할 가능성</p>
+        <p class="hero-desc"><strong>H3 · Cross-sell Opportunity</strong><br>Hero 상품의 가격을 직접 조정하기보다 연관성이 있는 상품을 연결해 추가 구매와 주문 수익성을 높일 수 있을 가능성</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">03.</span>Analysis / Validation</div></div>
+      <p class="hero-desc">헤비 플리스 집업 재킷(OT-001)의 Product Margin Rate(상품마진율)는 약 42.8%로 Outerwear(아우터) 평균 약 43.1%보다 낮았지만, 차이는 약 0.3%p에 불과했습니다. 또한 약 561만 원의 절대 마진액을 만들어내고 있어, 카테고리 평균보다 마진율이 낮다는 이유만으로 즉시 가격을 인상할 근거는 충분하지 않다고 판단했습니다.</p>
+      <p class="hero-desc">이에 가격 인상 대신 현재 판매력을 유지하면서 추가 구매 기회를 만들 수 있는지 확인하기 위해 헤비 플리스 집업 재킷(OT-001) 구매고객과 비구매고객의 다른 상품 구매 비율을 비교했습니다. 시그니처 로고 비니(ACC-001)에서 다음과 같은 차이가 확인되었습니다.</p>
+      <div class="kpi-strip kpi-strip-4">
+        <div class="kpi-strip-item"><span class="kpi-strip-label">OT-001 구매고객 ACC-001 구매율</span><span class="kpi-strip-value">29.5%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">OT-001 비구매고객 ACC-001 구매율</span><span class="kpi-strip-value">21.4%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">차이</span><span class="kpi-strip-value">+8.1%p</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">구매비율</span><span class="kpi-strip-value">약 1.38x</span></div>
+      </div>
+      <p class="hero-desc">또한 시그니처 로고 비니(ACC-001)는 현재재고 41개, Safety Stock(안전재고) 7개로 재고 여력이 있으며, Product Margin Rate(상품마진율)도 약 58.8%로 확인되었습니다. 따라서 가격 인상 가설은 약화되었고, 현재 가격을 유지하면서 ACC-001을 연관상품으로 테스트하는 방향을 추가 검토했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">04.</span>Counterpoint / Data Limitation</div></div>
+      <p class="hero-desc">시그니처 로고 비니(ACC-001)는 OT-001 구매고객에게 상대적으로 높은 구매 비율을 보였지만, 이는 Buyer-level Association(구매고객 단위 연관성)일 뿐 실제 두 상품이 같은 주문에서 함께 구매되었다는 것을 의미하지 않습니다. 또한 현재 데이터에는 연관상품 노출·클릭·구매 경로가 없어 OT-001이 ACC-001 구매를 유발했다고 판단할 수 없습니다. 따라서 ACC-001을 검증된 Cross-sell 상품으로 확정하지 않고 연관상품 후보로 테스트할 필요가 있다고 판단했습니다.</p>
+      <p class="hero-desc"><strong>Additional Data Needed</strong><br>Order ID(주문번호) · Purchase Date(구매일) · Order-level Products(주문별 상품) · Related Product Exposure(연관상품 노출) · Related Product Click(연관상품 클릭) · Purchase Path(구매경로)</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">05.</span>Final Judgment</div></div>
+      <p class="hero-desc">헤비 플리스 집업 재킷(OT-001)은 카테고리 평균 대비 마진율이 소폭 낮지만 높은 매출과 절대 마진액을 만들어내고 있어 현재 가격을 유지하는 것이 우선적으로 적절하다고 판단했습니다. 향후 리오더 또는 다음 시즌 기획 단계에서 원가구조를 다시 검토하되, 현재는 가격 인상보다 기존 판매력을 유지하면서 추가 구매 기회를 확장하는 방향을 선택했습니다.</p>
+      <p class="hero-desc">시그니처 로고 비니(ACC-001)는 구매고객 데이터에서 연관성이 확인되었지만 인과관계는 확인되지 않았으므로, Cross-sell 상품으로 확정하지 않고 우선 테스트할 후보 상품으로 선정했습니다.</p>
+      <div class="judgment-flow">
+        <span class="judgment-flow-step">매출 1위 상품 발견</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">가격 인상 검토</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">마진율·마진액 추가 확인</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">가격 인상 판단 보류</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">구매 연관성 발견</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">Cross-sell 테스트</span>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">06.</span>MD Action</div></div>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>01 · Price Hold</strong><br>헤비 플리스 집업 재킷(OT-001)의 현재 판매가격을 유지해 기존 판매력과 마진 기여를 우선 보존합니다. 향후 리오더 또는 다음 시즌 기획 시 원가구조를 다시 검토해 가격 조정 필요성을 판단합니다.</p>
+        <p class="hero-desc"><strong>02 · Related Product Test</strong><br>헤비 플리스 집업 재킷(OT-001)의 PDP(상품상세페이지)와 Lookbook(룩북)·Styling(스타일링) 콘텐츠에서 시그니처 로고 비니(ACC-001)를 연관상품으로 우선 노출해 Cross-sell 효과를 테스트합니다.</p>
+        <p class="hero-desc"><strong>03 · Margin Protection</strong><br>OT-001 자체의 추가 할인으로 구매를 유도하기보다 현재 가격과 마진을 유지하면서 ACC-001을 통한 추가 구매 기회를 검증합니다.</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">07.</span>Validation Plan</div></div>
+      <p class="hero-desc">Cross-sell 테스트에서는 ACC-001의 판매량 증가만 확인하지 않고, 연관상품 노출이 실제 추가 구매 행동과 연결되는지 검증합니다.</p>
+      <div class="kpi-card-grid">
+        <p class="hero-desc"><strong>Process KPI · 상품 탐색</strong><br>Related Product CTR(연관상품 클릭률)</p>
+        <p class="hero-desc"><strong>Result KPI · Cross-sell 성과</strong><br>Attach Rate(동반구매율)<br>AOV(평균 주문금액)<br>Order Margin Amount(주문 마진액)</p>
+      </div>
+      <p class="hero-desc">가능하다면 연관상품 노출 고객과 비노출 고객을 비교해 ACC-001의 기존 구매 성향과 Cross-sell 노출 이후의 성과 차이를 확인합니다. 구매 연관성을 인과관계로 해석하지 않고, 실제 노출 → 클릭 → 동반구매 데이터를 통해 Cross-sell 전략의 성과를 검증합니다.</p>
+    </section>
+
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('brand-a')">← Back to Brand A</button>
+    </section>
+  </div><!-- /case-hero-price-crosssell -->
+
+  <!-- ADDITIONAL CASE 2: Cancel / Return → Action Hold -->
+  <div class="view case-detail-view" id="view-case-cancel-return-hold">
+    <section class="page-header">
+      <div class="hero-eyebrow">// ADDITIONAL CASE</div>
+      <h1 class="page-title">Cancel / Return → Action Hold</h1>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">01.</span>Observation</div></div>
+      <p class="hero-desc">전체 488건의 주문 중 취소 20건(4.10%), 반품 15건(3.07%)이 확인되어 취소·반품 합계 비율은 약 7.17%로 나타났습니다.</p>
+      <div class="kpi-strip kpi-strip-3">
+        <div class="kpi-strip-item"><span class="kpi-strip-label">Cancel Rate</span><span class="kpi-strip-value">4.10%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">Return Rate</span><span class="kpi-strip-value">3.07%</span></div>
+        <div class="kpi-strip-item"><span class="kpi-strip-label">Total</span><span class="kpi-strip-value">7.17%</span></div>
+      </div>
+      <p class="hero-desc">상품별로 확인한 결과 헤비 플리스 집업 재킷(OT-001)은 약 10.8%, 시그니처 로고 비니(ACC-001)는 약 10.7%로 상대적으로 높은 취소·반품 비율을 보였습니다. 다만 특정 카테고리나 상품군 전체에 취소·반품이 집중되는 명확한 패턴은 확인되지 않았습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">02.</span>Hypothesis</div></div>
+      <p class="hero-desc">취소·반품 발생에는 다음과 같은 가능성이 있을 수 있다고 보았습니다.</p>
+      <div class="case-3col-grid">
+        <p class="hero-desc"><strong>H1 · Product Issue</strong><br>사이즈·핏·소재·품질 등 상품 자체의 문제가 영향을 주었을 가능성</p>
+        <p class="hero-desc"><strong>H2 · Customer Expectation Gap</strong><br>PDP(상품상세페이지)의 정보와 실제 상품에 대한 고객 기대 사이에 차이가 있었을 가능성</p>
+        <p class="hero-desc"><strong>H3 · Delivery / Operational Issue</strong><br>배송 또는 주문 처리 과정의 문제가 취소·반품에 영향을 주었을 가능성</p>
+      </div>
+      <p class="hero-desc">다만 현재 데이터에는 Cancel / Return Reason(취소·반품 사유)이 없어 세 가설을 직접 검증할 수 없었습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">03.</span>Analysis / Validation</div></div>
+      <p class="hero-desc">상품별 취소·반품 비율을 비교했지만 특정 상품군에 문제가 집중되었다고 판단할 만큼 일관된 패턴은 확인되지 않았습니다. 또한 취소·반품 사유, CS 문의, VOC(고객의 소리) 데이터가 없어 헤비 플리스 집업 재킷(OT-001)과 시그니처 로고 비니(ACC-001)의 상대적으로 높은 비율이 상품 품질·사이즈·배송 등 어떤 원인에서 발생했는지 구분할 수 없었습니다. 따라서 현재 데이터만으로 특정 원인을 지지하거나 기각하기에는 근거가 부족하다고 판단했습니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">04.</span>Counterpoint / Data Limitation</div></div>
+      <p class="hero-desc">취소·반품 비율이 상대적으로 높다는 사실만으로 상품 품질이나 고객 만족도에 문제가 있다고 해석할 수 없습니다. 원인 데이터 없이 특정 상품을 수정하거나 운영 정책을 변경할 경우 실제 문제와 관계없는 Action으로 이어질 수 있기 때문에, 이번 분석에서는 원인에 대한 결론을 보류했습니다.</p>
+      <p class="hero-desc"><strong>Additional Data Needed</strong><br>Cancel Reason(취소사유) · Return Reason(반품사유) · CS Inquiry(고객문의) · VOC(고객의 소리) · Size / Fit Feedback(사이즈·핏 피드백)</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">05.</span>Final Judgment</div></div>
+      <p class="hero-desc">취소·반품은 추가 확인이 필요한 지표이지만, 현재 데이터에서는 명확한 집중 패턴이나 발생 원인을 확인할 수 없었습니다. 따라서 상품 품질 개선이나 특정 SKU 운영 변경과 같은 Action을 즉시 실행하기보다 원인 데이터를 먼저 확보한 후 다시 판단하는 것이 적절하다고 판단했습니다.</p>
+      <div class="judgment-flow">
+        <span class="judgment-flow-step">취소·반품 현황 확인</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">상품별 비교</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">명확한 패턴 없음</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">원인 데이터 부족 확인</span>
+        <span class="judgment-flow-arrow">→</span>
+        <span class="judgment-flow-step">Action 보류</span>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">06.</span>MD Action</div></div>
+      <p class="hero-desc"><strong>Action Hold</strong></p>
+      <p class="hero-desc">현재 단계에서는 특정 상품 수정이나 운영 정책 변경을 실행하지 않습니다. 대신 향후 취소·반품 발생 시 사유 데이터를 구조화해 수집하고 CS·VOC 데이터와 상품 단위로 연결해 반복적으로 발생하는 원인이 있는지 확인합니다. 반복 패턴이 확인될 경우에만 상품 정보 개선, 사이즈 가이드 보완, 품질 점검 등 원인에 대응하는 MD Action을 결정합니다.</p>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header"><div class="section-title"><span class="section-num">07.</span>Validation Plan</div></div>
+      <p class="hero-desc">추가 데이터 확보 이후에는 상품별 취소·반품률 자체뿐 아니라 발생 사유의 구성과 반복 패턴을 함께 확인합니다.</p>
+      <div class="kpi-card-grid">
+        <p class="hero-desc"><strong>Monitoring KPI · 취소·반품</strong><br>Cancel Rate(취소율)<br>Return Rate(반품률)<br>Reason Distribution(사유별 비중)</p>
+      </div>
+      <p class="hero-desc">특정 SKU 또는 사유에서 반복적인 이상 패턴이 확인될 경우 원인을 추가 분석하고, Action 실행 이후 해당 사유의 취소·반품률 변화를 비교합니다.</p>
+    </section>
+
+    <section class="section-block">
+      <button class="hero-cta" onclick="showView('brand-a')">← Back to Brand A</button>
+    </section>
+  </div><!-- /case-cancel-return-hold -->
+
+</main>
+
+<script>
+  // WORKS 하위 상세 view는 nav에서 WORKS를 active로 유지
+  const NAV_PARENT = {
+    rains: 'works',
+    lmood: 'works',
+    bootcamp: 'works',
+    'brand-a': 'works',
+    'case-bestseller-reorder': 'works',
+    'case-carryover-markdown': 'works',
+    'case-summer-redesign': 'works',
+    'case-newcustomer-acquisition': 'works',
+    'case-hero-price-crosssell': 'works',
+    'case-cancel-return-hold': 'works'
+  };
+
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    const activeNav = NAV_PARENT[name] || name;
+    document.querySelectorAll('.nav-menu button').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === activeNav);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function filterCat(btn, cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#blog-grid .blog-card').forEach(card => {
+      const match = cat === 'all' || card.dataset.cat === cat;
+      card.style.display = match ? 'flex' : 'none';
+    });
+  }
+</script>
+</body>
+</html>

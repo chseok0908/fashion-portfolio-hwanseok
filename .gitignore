@@ -1,0 +1,31 @@
+# This repo hosts the web portfolio only (portfolio-blog-kit.html + the
+# images it references). PPT build tooling, generated PPTX versions, and
+# reference material used only during local work are intentionally not
+# published here.
+
+# PPTX build tooling (Node scripts, node_modules, verification output)
+.pptxbuild/
+
+# Generated PPTX deck versions (large binaries, work-in-progress history)
+output/
+
+# External reference material (not original content)
+reference/
+
+# PPT-only image assets (not used by the web portfolio)
+images/ppt/
+
+# Superseded thumbnail backups (not referenced by the live site)
+images/*-thumbnail-backup.png
+images/*-newcrop.png
+
+# Env / secrets (none currently present — kept as a guard)
+.env
+.env.*
+*.pem
+*.key
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
